@@ -1,0 +1,104 @@
+h1 {  
+  font-family: 'Barrio', cursive;
+  display: block;  
+  font-size: 3rem;  
+  font-weight: 900;  
+  text-align: center;  
+  letter-spacing: 1px;  
+  color: #9C5CD9;  
+  text-transform: uppercase;  
+  position: fixed;
+  bottom: 350px;
+  animation: glow 2s ease-in-out infinite alternate;
+  color: #CF0D12;
+}  
+ 
+body {  
+    margin: 50px auto;  
+    text-align: center;  
+    width: 800px;  
+	color: #156811 ;
+    font-family: 'Water Brush', cursive;
+	font-size: 20px;
+	background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	background-size: 400% 400%;
+	animation: gradient 15s ease infinite;
+} 
+
+.button {
+  border-radius: 4px;
+  background-color: #6C1515;
+  border: none;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 28px;
+  padding: 20px;
+  width: 200px;
+  transition: all 0.5s;
+  cursor: pointer;
+  margin: 5px;
+  font-family: 'Alumni Sans Inline One', cursive;
+}
+
+.button span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.button span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.button:hover span {
+  padding-right: 25px;
+  box-shadow: 0 12px 16px 0 rgba(0,0,0,0.24), 0 17px 50px 0 rgba(0,0,0,0.19);
+}
+
+.button:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+.line{
+  background-color:#500F8A;
+  height:200px;
+  width:5px;
+}
+
+.header-buttons{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  position: fixed;
+  bottom: 150px;
+  left:32%;
+}
+
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+@keyframes glow {
+    from {
+      text-shadow: 0 0 20px #F3E355;
+    }
+    to {
+      text-shadow: 0 0 30px #DAF7A6, 0 0 10px #4dbbc7;
+    }
+  }
+}
