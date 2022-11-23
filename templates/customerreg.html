@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Boogaloo&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/candreg.css') }}">
+<!--link rel= "stylesheet"  href= "candreg.css"-->
+</head>
+<body>
+<div class="vertical-menu">
+  <a href="{{ url_for('dashboard') }}" class="arrow"><span>Home</span></a>
+  <a href="{{ url_for('cand') }}" class="arrow"><span>Search</span></a>
+  <a class="active" href="{{ url_for('customerreg') }}"class="arrow"><span>Add Candidate</span></a>
+  <a href="{{ url_for('interview') }}"class="arrow"><span>Schedule Interview</span></a>
+  <a href="{{ url_for('panel') }}"class="arrow"><span>Add Panel</span></a>
+  <a href="{{ url_for('hrafterlogin') }}"class="arrow"><span>Add HR</span></a>
+  <a href="{{ url_for('test') }}"class="arrow"><span>Add Test</span></a>
+  <a href="#about"class="arrow"><span>Interview Result</span></a>
+  <div class="vertical-menudown ">
+	<a href="{{ url_for('logout') }}"class="arrow"><span>Logout</span></a>
+  </div>
+</div>
+<h1>CANDIDATE REGISTRATION FORM</h1>
+<!--form action="https://candidateinterview.azurewebsites.net/candsuc" method="post" class="module-border-wrap"-->
+<form action="http://127.0.0.1:5000/candsuc" method="post" class="module-border-wrap">
+<div class="module">
+<table>
+	<tr>
+		<td width="10%">
+		<b>Enter Full Name:</b><br>
+		<br>
+		</td>
+	<td>
+	<div class="impfield">
+	<input type="text" size="25" placeholder="Enter your name:" name="username">	
+	<label for="username">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+  </tr>
+  <tr>
+	<td width="50%">
+	<b>Enter DOB:</b><br><br>
+	</td>
+	<td>
+	<input type="date" placeholder="Enter DOB(dd-mm-yyyy):" name="dob" /><br><br>
+	</td>
+  </tr>
+  <tr>
+	<td>
+	<b>Select Gender:</b><br><br><br>
+	</td>
+	<td>
+	<div class="impfield">
+	Male:
+	<input type="radio" name="gender" value="male" />Female:
+	<input type="radio" name="gender" value="female" />Other:
+	<input type="radio" name="gender" value="other" />
+	<label for="gender">*</label></div>
+	<div class="hide">It is a necessary field.</div><br>
+	</td>
+  </tr>
+  <tr>
+	<td>
+	<b>Enter Personal Mobile No.:</b><br><br><br>
+	</td>
+	<td>
+	<div class="impfield">
+	<input type="text" size="25" placeholder="Enter your mobile number" name="mobile" />
+	<label for="gender">*</label></div>
+	<div class="hide">It is a necessary field.</div><br>
+	</td>
+  </tr>
+  <tr>
+	<td>
+	<b>Enter Email:</b><br><br><br><br>
+	</td>
+	<td>
+	<div class="impfield">
+	<input type="text" size="30" placeholder="Enter your email id" name="email" />
+	<label for="email">*</label></div>
+	<div class="hide">It is a necessary field.</div><br>
+	</td>
+  </tr>
+  <tr>
+	<td width="10%">
+	<b>Enter Password:</b><br><br><br><br><br><br><br>
+	</td>
+	<td>
+	<div class="impfield">
+	<input type="password" size="30" id="pwd" name="pwd" minlength="8" />
+	<label for="pwd">*</label></div>
+	<div class="hide">It is a necessary field. Passwords must be of min length 8 and must contain a digit.</div><br><br>
+	</td>
+  </tr>
+</table>
+<input type="submit" value="SUBMIT" class="button"><br>
+</div>
+</form>
+</body>
+</html>

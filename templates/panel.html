@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Form</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  load_data_all();
+  function load_data_by_name(query)
+  {
+   $.ajax({
+    url:"/searchpanelbyname",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td>"+value.panelID+"</td>"+"<td>"+value.panelName+"</td>"+"<td>"+value.panelDesignation+"</td>"+"<td>"+value.panelSkills+"</td>"+"<td>"+value.IsActive+"</td>"+"<td>"+value.addedOn+"</td>"+"<td>"+value.modifiedOn+"</td>"+ "<td><button class='btn btn-info btn-xs btn-edit' >Edit</button><button class='btn btn-danger btn-xs btn-delete'>Delete</button></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  function load_data_all()
+  {
+   $.ajax({
+    url:"/searchpanelall",
+    method:"POST",
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td>"+value.panelID+"</td>"+"<td>"+value.panelName+"</td>"+"<td>"+value.panelDesignation+"</td>"+"<td>"+value.panelSkills+"</td>"+"<td>"+value.IsActive+"</td>"+"<td>"+value.addedOn+"</td>"+"<td>"+value.modifiedOn+"</td>"+ "<td><button class='btn btn-info btn-xs btn-edit' >Edit</button><button class='btn btn-danger btn-xs btn-delete'>Delete</button></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  function load_data_by_designation(query)
+  {
+   $.ajax({
+    url:"/searchpanelbydesignation",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td>"+value.panelID+"</td>"+"<td>"+value.panelName+"</td>"+"<td>"+value.panelDesignation+"</td>"+"<td>"+value.panelSkills+"</td>"+"<td>"+value.IsActive+"</td>"+"<td>"+value.addedOn+"</td>"+"<td>"+value.modifiedOn+"</td>"+ "<td><button class='btn btn-info btn-xs btn-edit' >Edit</button><button class='btn btn-danger btn-xs btn-delete'>Delete</button></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  $('#search_text_by_name').keyup(function(){
+    var search = $(this).val();
+    if(search != ''){
+    load_data_by_name(search);
+   }else{
+    load_data_by_name();
+   }
+  });
+  $('#search_text_by_designation').keyup(function(){
+    var search = $(this).val();
+    if(search != ''){
+    load_data_by_designation(search);
+   }else{
+    load_data_by_designation();
+   }
+  });
+  // declaring global variables
+	var currentRow;
+	var cur_panelID;
+	var cur_name;
+	var cur_designation;
+	var cur_skills;
+	var cur_active;
+	var cur_added;
+	var cur_modified;
+  // Show Input element
+    $("body").on("click", ".btn-edit", function(){  
+		currentRow=$(this).closest("tr"); 
+        $(this).parents("tr").find("td:not(:last-child)").each(function(i){
+			if(i=='0'){
+				cur_panelID= currentRow.find("td:eq(0)").text();
+            } else if (i=='1'){
+                var idname = 'panelName';
+				var fieldtype = 'text';
+				cur_name = currentRow.find("td:eq(1)").text();
+            }else if (i=='2'){
+                var idname = 'panelDesignation';
+				var fieldtype = 'text';
+				cur_designation = currentRow.find("td:eq(2)").text();
+            }else if (i=='3'){
+                var idname = 'panelSkills';
+				var fieldtype = 'text';
+				cur_skills = currentRow.find("td:eq(3)").text();
+			}else if (i=='4'){
+                var idname = 'IsActive';
+				cur_active = currentRow.find("td:eq(4)").text();
+			}else if (i=='5'){
+                cur_added= currentRow.find("td:eq(5)").text();
+			}else if (i=='6'){
+                cur_modified= currentRow.find("td:eq(6)").text();
+			}
+			
+			else{} 
+			if (idname=='IsActive'){
+			$(this).html('<select id="isnewActive"> <option value="yes">Yes</option> <option value="no">No</option></select>');
+			}
+			else if(i!=0 && i!=5 && i!=6){
+			$(this).html('<input type="' + fieldtype + '" name="updaterec" id="' + idname + '" size="7" value="' + $(this).text() + '">');
+			}else{} 
+        }); 
+		
+		$(this).parents("tr").find("td:eq(7)").prepend("<button class='btn btn-update'>Update</button><button class='btn btn-cancel'>Cancel</button>");
+		$(this).hide();    
+		$(this).parents("tr").find(".btn-delete").hide();
+		
+    });  
+	
+	$("body").on("click", ".btn-cancel", function(){  
+		var currentRow=$(this).closest("tr"); 
+        $(this).parents("tr").find("td:not(:last-child)").each(function(i){
+            if (i=='1'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_name);
+            }else if (i=='2'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_designation);
+            }else if (i=='3'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_skills);
+			}else if (i=='4'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_active);
+            }else{} 
+        });  
+        $(this).parents("tr").find(".btn-edit").show(); 
+		$(this).parents("tr").find(".btn-delete").show();		
+        $(this).parents("tr").find(".btn-update").remove();  
+        $(this).parents("tr").find(".btn-cancel").remove();  
+    });  
+	
+	$("body").on("click", ".btn-update", function(){  
+        var string = cur_panelID;
+		var table="panel";
+        var panelName = $("#panelName").val();
+        var panelDesignation = $("#panelDesignation").val();
+        var panelSkills = $("#panelSkills").val();
+		var isActive = $("#isnewActive").val();
+		$.post("/table_update", { table: table,string: string,panelName: panelName, panelDesignation: panelDesignation, panelSkills:panelSkills, isActive: isActive}, function(data) {
+            $("#displaymessage").html(data);
+            $("#displaymessage").show();
+			alert("Record Updated Successfully. Site needs to reload.");
+			location.reload();
+        });
+		
+          
+        $(this).parents("tr").find(".btn-edit").show();  
+		$(this).parents("tr").find(".btn-delete").show();
+        $(this).parents("tr").find(".btn-cancel").remove();  
+        $(this).parents("tr").find(".btn-update").remove();  
+    });  
+	
+	$("body").on("click", ".btn-outline-primary", function(){  
+        var panelName = $("#add_panelName").val();
+		var table="panel";
+        var panelDesignation = $("#add_panelDesignation").val();
+        var panelSkills = $("#add_panelSkills").val();
+		var IsActive = $("#add_IsActive").val();
+		$.post("/cand_add", { table: table,panelName: panelName, panelDesignation: panelDesignation, panelSkills:panelSkills, IsActive: IsActive}, function(data) {
+		$("#displaymessage").html(data);
+		$("#displaymessage").show();
+			
+        });
+		  
+    }); 
+	
+	$("body").on("click", ".btn-secondary", function(){  
+        load_data_all();		  
+    });
+	
+	
+	$("body").on("click", ".btn-delete", function(){  
+		if (confirm("Are you sure you want delete this record?") == true)
+		{
+			currentRow=$(this).closest("tr"); 
+			cur_panelID = currentRow.find("td:eq(0)").text();
+			$(this).parents("tr").remove();
+			var string = cur_panelID;
+			var table="panel";
+			$.post("/cand_delete", { table: table, string: string}, function(data) {
+				$("#displaymessage").html(data);
+				$("#displaymessage").show();
+			});
+		}else{}
+    });
+	
+	/*
+	window.onload=function()	
+	{
+	PrintElem();
+	}
+	*/
+  
+});
+</script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lusitana&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/cand.css') }}">
+</head>
+<body>
+<div class="page">
+  <header tabindex="0">Panel Form</header>
+  <div class="sidebar">
+		<ul>
+        <li><a href="{{ url_for('dashboard') }}" ><span>Home</span></a></li>
+		<li><a href="{{ url_for('hrafterlogin') }}"><span>Add HR</span></a></li>
+		<div class="active">
+        <li><a href="{{ url_for('panel') }}"><span>Add Panel</span></a></li>
+		</div>
+		<li><a href="{{ url_for('test') }}"><span>Add Test</span></a></li>
+		<li><a href="{{ url_for('cand') }}" ><span>Add Candidate</span></a></li>
+		<li><a href="{{ url_for('interview') }}"><span>Schedule Interview</span></a></li>
+		<li><a href="{{ url_for('executeint') }}"><span>Execute Interview</span></a></li>
+		<li><a href="{{ url_for('execute') }}"><span>Interview Result</span></a></li>
+		
+        <li class="small"><a href="{{ url_for('logout') }}"class="arrow"><span>Logout</span></a></li>
+		</ul>
+</div>
+<div align="center">
+<div class="container">
+<div class="table-responsive"> 
+<div class="module">
+<div class='btn btn-warning' id="displaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+<div class='btn btn-success' id="successdisplaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+<table class="table table-bordered" id="myTable">
+<thead>
+      <tr>
+		 <th></th>
+         <th ><input type="text" id="search_text_by_name" name="search_text_by_name" placeholder="Search by name" size="10"/></th>
+         <th ><input type="text" id="search_text_by_designation" name="search_text_by_designation" placeholder="Search by designation" size="10"/></th>
+         <th ></th>
+		 <th ></th>
+		 <th ></th>
+		 <th ></th>
+		 <th size="10%"><input type="submit" class="btn btn-secondary" value="Search All"></th>
+      </tr>
+	  <thead>
+	  <tr>
+		 <th>ID</th>
+         <th>Name</th>
+         <th>Designation</th>
+         <th>Skills</th>
+		 <th>Active</th>
+		 <th>AddedOn</th>
+		 <th>ModifiedOn</th>
+		 <th style="width:80px;">Register/Edit</th>
+      </tr>
+	  </thead>
+	  <tbody>
+	  <div id="myrow"></div> 
+   </tbody>
+	  <tfoot>
+ <!--form action="https://candidateinterview.azurewebsites.net/candsuc" method="post"-->
+	<tr>
+	<!--form action="http://127.0.0.1:5000/candsuc" method="post"-->
+	<td></td>
+	<td>
+	<div class="impfield">
+	<input type="text" size="10" placeholder="Enter name:" name="panelName" id="add_panelName">	
+	<label for="add_panelName">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+    <td >
+	<div class="impfield">
+	<input type="text" size="10" placeholder="Enter designation:" name="panelDesignation" id="add_panelDesignation">
+	<label for="add_panelDesignation">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+    <td>
+	<div class="impfield">
+	<input type="text" size="10" placeholder="Enter skills:" name="panelSkills" id="add_panelSkills">
+	<label for="add_panelSkills">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+	<td>
+	<div class="impfield">
+	<select name="IsActive" id="add_IsActive" style="max-width:80%;">
+	<option value="yes">YES</option>
+	<option value="no">NO</option>
+	</select>
+	<label for="add_IsActive">*</label></div>
+	<div class="hide">Required.</div>
+	</td>
+	<td>
+	</td>
+	<td>
+	</td>
+	<td>
+	<input type="submit" class="btn btn-outline-primary" value="ADD">
+	</td>
+	<!--/form-->
+   </tr>
+   </tfoot>
+<!--form action="https://candidateinterview.azurewebsites.net/panelsuc" method="post" class="module-border-wrap"-->
+<!--form action="http://127.0.0.1:5000/panelsuc" method="post" class="module-border-wrap">
+<div class="impfield">
+<b>Enter Panel Name:</b>
+<input type="text" placeholder="Enter name for the panel here.." name="panelName" size="30">
+<label for="panelName">*</label></div>
+<div class="hide">It is a necessary field.</div><br>
+<div class="impfield">
+<b>Enter Panel Designation:</b>
+<input type="text" size="30" placeholder="Enter candidates designated for panel" name="panelDesignation">
+<label for="panelDesignation">*</label></div>
+<div class="hide">It is a necessary field.</div><br>
+<div class="impfield">
+<b>Enter Panel Skills:</b>
+<input type="text" size="30" placeholder="Enter Skills for evaluation eg.C++" name="panelSkills">
+<label for="panelSkills">*</label></div>
+<div class="hide">It is a necessary field.</div><br>
+<!--
+<b>Enter the date panel was created on:</b>
+<input type="date" placeholder="(dd-mm-yyyy):" name="AddedOn"><br><br>
+<b>Enter the date panel was modified on:</b>
+<input type="date" placeholder="(dd-mm-yyyy):" name="ModifiedOn"><br><br>
+>
+<div class="impfield">
+<b>Is the panel currently active?:</b>
+Yes:
+<input type="radio" name="IsActive" value="yes">No:
+<input type="radio" name="IsActive" value="no">
+<label for="IsActive">*</label></div>
+<div class="hide">It is a necessary field.</div><br>
+<input type="submit" value="Add Panel" class="button"><br-->
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

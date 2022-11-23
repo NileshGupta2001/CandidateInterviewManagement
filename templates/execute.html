@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Result</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+
+$(document).ready(function(){
+	  
+	    
+  var getvalues;
+  
+  
+  function load_data_by_name(query)
+  {
+   $.ajax({
+    url:"/searchintbyname",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td>"+value.int_id+"</td>"+"<td>"+value.name+"</td>"+"<td>"+value.role+"</td>"+"<td>"+value.skills+"</td>"+"<td>"+value.testName+"</td>"+"<td>"+value.panelName+"</td>"+ "<td>"+value.addedOn+"</td>"+ "<td><button class='btn btn-info btn-xs btn-edit' >Edit</button><button class='btn btn-danger btn-xs btn-delete'>Delete</button></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  $('#search_text_by_name').keyup(function(){
+    var search = $(this).val();
+    if(search != ''){
+    load_data_by_name(search);
+   }else{
+    load_data_by_name();
+   }
+  });
+  
+	$("body").on("click", ".btn-secondary", function(){  
+        new_input();		  
+    });
+	
+	// declaring global variables
+	var currentRow;
+	var cur_int_id;
+	var cur_name;
+	var cur_roles;
+	var cur_skills;
+	var cur_testName;
+	var cur_panelName;
+	var cur_addedOn;
+  // Show Input element
+    $("body").on("click", ".btn-edit", function(){  
+		currentRow=$(this).closest("tr"); 
+        $(this).parents("tr").find("td:not(:last-child)").each(function(i){
+			if(i=='0'){
+				cur_int_id= currentRow.find("td:eq(0)").text();
+            } else if (i=='1'){
+                var idname = 'name';
+				var fieldtype = 'text';
+				cur_name = currentRow.find("td:eq(1)").text();
+            }else if (i=='2'){
+                var idname = 'role';
+				var fieldtype = 'text';
+				cur_roles = currentRow.find("td:eq(2)").text();
+            }else if (i=='3'){
+                var idname = 'skills';
+				var fieldtype = 'text';
+				cur_skills = currentRow.find("td:eq(3)").text();
+			}else if (i=='4'){
+                var idname = 'testName';
+				var fieldtype = 'text';
+				cur_testName = currentRow.find("td:eq(4)").text();
+			}else if (i=='5'){
+                var idname = 'panelName';
+				var fieldtype = 'text';
+				cur_panelName = currentRow.find("td:eq(5)").text();
+			}else if (i=='6'){
+                var idname = 'addedOn';
+				var fieldtype = 'date';
+				cur_addedOn = currentRow.find("td:eq(6)").text();
+			}
+			else{} 
+			if (idname=='role'){
+				$(this).html('<select id="role"> <option value="Software Engineer">Software Engineer</option> <option value="Data Analyst">Data Analyst</option><option value="Web Developer">Web Developer</option><option value="Product Manager">Product Manager</option></select>');
+			}else if(idname=='skills'){
+				$(this).html('<select multiple id="skills"> <option value="python">Python</option> <option value="C++">C++</option><option value="Java">Java</option></select>');
+			}else if(idname=='panelName'){
+				var data="<select multiple id='panelName'>";
+				$.each(getvalues,function(index,value){
+					data += "<option value="+value.panelName+">"+value.panelName+"</option>";
+					});
+				data+="</select>";
+				$(this).html(data);
+			}else if(idname=='testName'){
+				var data="<select multiple id='testName'>";
+				$.each(getvalues,function(index,value){
+					data += "<option value="+value.testName+">"+value.testName+"</option>";
+					});
+				data+="</select>";
+				$(this).html(data);
+			}else if(idname=='addedOn'){
+				
+			}else if(i!=0){
+			$(this).html('<input type="' + fieldtype + '" name="updaterec" id="' + idname + '" size="7" value="' + $(this).text() + '">');
+			}else{} 
+        }); 
+		
+		$(this).parents("tr").find("td:eq(7)").prepend("<button class='btn btn-update'>Update</button><button class='btn btn-cancel'>Cancel</button>");
+		$(this).hide();    
+		$(this).parents("tr").find(".btn-delete").hide();
+		
+    });
+	
+	$("body").on("click", ".btn-cancel", function(){  
+		var currentRow=$(this).closest("tr"); 
+        $(this).parents("tr").find("td:not(:last-child)").each(function(i){
+            if (i=='1'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_name);
+            }else if (i=='2'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_roles);
+            }else if (i=='3'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_skills);
+			}else if (i=='4'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_testName);
+			}else if (i=='5'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_panelName);
+			}else if (i=='6'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_addedOn);
+            }else{} 
+        });  
+        $(this).parents("tr").find(".btn-edit").show(); 
+		$(this).parents("tr").find(".btn-delete").show();		
+        $(this).parents("tr").find(".btn-update").remove();  
+        $(this).parents("tr").find(".btn-cancel").remove();  
+    }); 
+	
+	$("body").on("click", ".btn-update", function(){  
+        var string = cur_int_id;
+		var table="sched_interview";
+        var name = $("#name").val();
+        var role = $("#role").val();
+        var skills = $("#skills").val();
+		var testName = $("#testName").val();
+		var panelName = $("#panelName").val();
+		$.post("/table_update", { table: table,string: string,name: name, role: role, skills: skills, testName: testName, panelName: panelName}, function(data) {
+            $("#displaymessage").html(data);
+            $("#displaymessage").show();
+			alert("Record Updated Successfully. Site needs to reload.");
+			location.reload();
+        });
+		
+          
+        $(this).parents("tr").find(".btn-edit").show();  
+		$(this).parents("tr").find(".btn-delete").show();
+        $(this).parents("tr").find(".btn-cancel").remove();  
+        $(this).parents("tr").find(".btn-update").remove();  
+    });
+	
+	$("body").on("click", ".btn-delete", function(){  
+		if (confirm("Are you sure you want delete this record?") == true)
+		{
+			currentRow=$(this).closest("tr"); 
+			cur_int_id= currentRow.find("td:eq(0)").text();
+			$(this).parents("tr").remove();
+			var string = cur_int_id;
+			var table="sched_interview";
+			$.post("/cand_delete", { table: table, string: string}, function(data) {
+				$("#displaymessage").html(data);
+				$("#displaymessage").show();
+			});
+		}else{}
+    });
+	
+});
+</script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lusitana&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/test.css') }}">
+<!--link rel= "stylesheet"  href= "cand.css"-->
+</head>
+<body>
+<div class="page">
+  <header tabindex="0"> Candidate Result</header>
+  <div class="sidebar">
+<ul>
+        <li><a href="{{ url_for('dashboard') }}" ><span>Home</span></a></li>
+		<li><a href="{{ url_for('hrafterlogin') }}"><span>Add HR</span></a></li>
+        <li><a href="{{ url_for('panel') }}"><span>Add Panel</span></a></li>
+		<li><a href="{{ url_for('test') }}"><span>Add Test</span></a></li>
+		<li><a href="{{ url_for('cand') }}" ><span>Add Candidate</span></a></li>
+		<li><a href="{{ url_for('interview') }}"><span>Schedule Interview</span></a></li>
+		<li><a href="{{ url_for('executeint') }}" ><span>Execute Interview</span></a></li>
+		<div class="active">
+		<li><a href="{{ url_for('execute') }}"><span>Interview Result</span></a></li>
+		</div>
+		
+        <li class="small"><a href="{{ url_for('logout') }}"class="arrow"><span>Logout</span></a></li>
+      </ul>
+</div>
+<div align="center">
+<div class="container">
+<div class="table-responsive"> 
+<div class="module">
+<div class='btn btn-warning' id="displaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+<div class='btn btn-success' id="successdisplaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+<table class="table table-bordered" id="myTable">
+  <thead>
+		<tr>
+		<th rowspan="2" style="text-align: center; vertical-align: middle;">ID</th>
+		<th colspan="5">Candidate</th>
+		<th rowspan="2" style="width:20%; text-align: center; vertical-align: middle;">Test</th>
+		<th colspan="2">Interview</th>
+		<th rowspan="2" style="text-align: center; vertical-align: middle; width:80px;">Result</th>
+		<th rowspan="2" style="width:60px; text-align: center; vertical-align: middle;">Register/Edit</th>
+		</tr>
+	  <tr>
+         <th style="width:80px;"> Name</th>
+		 <th style="width:80px;">Mobile</th>
+		 <th style="width:80px;">Email</th>
+         <th style="width:80px;"> Role</th>
+         <th style="width:80px;"> Skills</th>
+		 <th> Interview1</th>
+		 <th> Interview2</th>
+      </tr>
+	  </thead>
+	  <tbody>
+   </tbody>
+	  <tfoot><div id="myrow"></div> 
+ <!--form action="https://candidateinterview.azurewebsites.net/candsuc" method="post"-->
+	<!--tr>
+	<form action="http://127.0.0.1:5000/candsuc" method="post">
+	<td></td>
+	<td>
+	<div class="impfield">
+	<input type="text" size="15" placeholder="Enter name:" name="add_name" id="add_name">
+	<label for="fdate">*</label></div>
+	<div class4EWA="hide">Required</div>
+	</td>
+	<td >
+	<div class="impfield">
+	Software Engineer:
+	<input type="radio" name="add_role" id="add_role" value="Software Engineer">Data Analyst:
+	<input type="radio" name="add_role" id="add_role" value="Data Scientist">Web Developer:
+	<input type="radio" name="add_role" id="add_role" value="Web Developer">Product Manager:
+	<input type="radio" name="add_role" id="add_role" value="Product Manager">
+	<label for="fname">*</label></div>
+	<div class="hide">Required</div>
+	</td>
+    <td >
+	<div class="impfield">
+	<input type="checkbox" name="add_python" id="add_python"  value="python">python
+	<input type="checkbox" name="add_C++" id="add_C++" value="C++">C++
+	<input type="checkbox" name="add_java" id="add_java" value="java">java
+	<label for="frate">*</label></div>
+	<div class="hide">Required</div>
+	</td>
+	<td>
+	<div class="impfield">
+	<input type="date" placeholder="(dd-mm-yyyy):" name="sdate" id="add_sdate">
+	<label for="sdate">*</label></div>
+	<div class="hide">Required</div>
+	</td>
+	<td >
+	<div class="impfield">
+	<input type="text" size="15" placeholder="Enter Second Interviewee name:" name="sname" id="add_sname">
+	<label for="sname">*</label></div>
+	<div class="hide">Required</div>
+	</td>
+	<td>
+	<div class="impfield">
+	<input type="text" size="13" placeholder="Enter rating:" name="srate"  id="add_srate">
+	<label for="srate">*</label></div>
+	<div class="hide"> Required</div>
+	</td>
+	<td>
+	<input type="submit" class="btn btn-outline-primary" value="ADD">
+	</td>
+	<!--/form-->
+   <!--/tr-->
+   </tfoot>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview form</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!--script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script-->
+<script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script>
+<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js" ></script>
+<script>             
+function load_data_by_name(query)
+  {
+   $.ajax({
+    url:"/searchcand",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td></td>"+"<td>"+value.username+"</td>"+"<td>"+value.mobile+"</td>"+"<td>"+value.email+"</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  function load_data_by_autoname(query)
+  {
+   $.ajax({
+    url:"/searchcand",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var availableTags=[];
+      $.each(res,function(index,value){
+			availableTags.push(value.username);
+    });
+	$( "#search_text_by_intname" ).autocomplete({
+		source: availableTags,
+		open: function() {
+			$('.ui-autocomplete').width('120px');
+            $('.ui-widget-content').css('background', '#E1F7DE');
+            $('.ui-menu-item a').removeClass('ui-corner-all');
+        }
+		});
+    }
+   });
+  }
+  
+  function load_data_by_mobile(query)
+  {
+   $.ajax({
+    url:"/searchcandbymobile",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td></td>"+"<td>"+value.username+"</td>"+"<td>"+value.mobile+"</td>"+"<td>"+value.email+"</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  function load_data_by_automobile(query)
+  {
+   $.ajax({
+    url:"/searchcandbymobile",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var availableTags=[];
+      $.each(res,function(index,value){
+			availableTags.push(value.mobile);
+    });
+	$( "#search_text_by_mobile" ).autocomplete({
+		source: availableTags,
+		open: function() {
+			$('.ui-autocomplete').width('120px');
+            $('.ui-widget-content').css('background', '#E1F7DE');
+            $('.ui-menu-item a').removeClass('ui-corner-all');
+        }
+		});
+    }
+   });
+  }
+
+  function load_data_by_email(query)
+  {
+   $.ajax({
+    url:"/searchcandbyemail",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td></td>"+"<td>"+value.username+"</td>"+"<td>"+value.mobile+"</td>"+"<td>"+value.email+"</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  function load_data_by_autoemail(query)
+  {
+   $.ajax({
+    url:"/searchcandbyemail",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var availableTags=[];
+      $.each(res,function(index,value){
+			availableTags.push(value.email);
+    });
+	$( "#search_text_by_email" ).autocomplete({
+		source: availableTags,
+		open: function() {
+			$('.ui-autocomplete').width('120px');
+            $('.ui-widget-content').css('background', '#E1F7DE');
+            $('.ui-menu-item a').removeClass('ui-corner-all');
+        }
+		});
+    }
+   });
+  }
+
+function Loaddatabynameinscheduleinterview()
+{
+	
+	$('#search_text_by_intname').keyup(function(){
+		var search = $(this).val();
+		if(search != ''){
+		load_data_by_autoname(search);
+	}else{
+		load_data_by_autoname();
+   }
+  });
+  
+  $('#search_text_by_mobile').keyup(function(){
+		var search = $(this).val();
+		if(search != ''){
+		load_data_by_automobile(search);
+	}else{
+		load_data_by_automobile();
+   }
+  });
+  
+  $('#search_text_by_email').keyup(function(){
+		var search = $(this).val();
+		if(search != ''){
+		load_data_by_autoemail(search);
+	}else{
+		load_data_by_autoemail();
+   }
+  });
+}
+
+function GetSelectedData()
+{
+	$('#search_text_by_intname').on('autocompleteselect', function (e, ui) {
+        load_data_by_name(ui.item.value);
+    });
+	
+	$('#search_text_by_mobile').on('autocompleteselect', function (e, ui) {
+        load_data_by_mobile(ui.item.value);
+    });
+	
+	$('#search_text_by_email').on('autocompleteselect', function (e, ui) {
+        load_data_by_email(ui.item.value);
+    });
+}
+
+$(document).ready(function(){	
+  var getvalues;
+  var intvalues;
+  new_input();  
+  function new_input()
+  {
+   $.ajax({
+    url:"/interviewrecords",
+    method:"POST",
+    success:function(res)
+    {
+	  getvalues=res;
+	  var data = "<tr><td></td><td><input type='text' size='15' placeholder='Search name:' id='search_text_by_intname' name='search_text_by_intname' class='search_text_by_intname'/></td><td><input type='text' size='15' id='search_text_by_mobile' name='search_text_by_mobile' placeholder='Search mobile'/></td><td><input type='text' size='15' id='search_text_by_email' name='search_text_by_email' placeholder='Search email'/></td><td><select id='add_role'><option value='Software Engineer'>Software Engineer</option> <option value='Data Analyst'>Data Analyst</option><option value='Web Developer'>Web Developer</option><option value='Product Manager'>Product Manager</option></select></td><td><center><table class='noBorder' id='newtable'><thead><tr class='noBorder'><td class='noBorder'><input type='checkbox' id='add_python' class='add_skills' value='python'></td><td class='noBorder'><label for='add_python' style='color:black; padding-top:6px;'> Python</label></td></tr><tr class='noBorder'><td class='noBorder';><input type='checkbox' id='add_C++' class='add_skills' value='C++'></td><td class='noBorder'><label style='color:black; padding-top:6px;' for='add_C++' > C++</label></td></tr><tr class='noBorder'><td class='noBorder'><input type='checkbox' id='add_java' class='add_skills' value='Java'></td><td class='noBorder'><label for='add_Java' style='color:black; padding-top:6px;'>Java</label></td></tr></thead></table></center></td><td><center><table class='noBorder' id='newtable'><thead>";
+	   
+      $.each(res,function(index,value){
+		if(value.testName){
+				data += "<tr class='noBorder'><td class='noBorder'><input type='checkbox' class='add_testName' value="+value.testName+"></td><td class='noBorder'><label for='add_skills' style='color:black; padding-top:6px;'>"+value.testName+"</label></td></tr>";
+            }
+      });
+	  data+="</thead></table></center></td><td><center><table class='noBorder' id='newtable'><thead>";
+	  $.each(res,function(index,value){
+		if(value.panelName){
+				data += "<tr class='noBorder'><td class='noBorder'><input type='checkbox' class='add_panelName' value="+value.panelName+"></td><td class='noBorder'><label for='add_skills' style='color:black; padding-top:6px;'>"+value.panelName+"</label></td></tr>";
+            }
+      });
+	  data+="</thead></table></center></td><td></td><td><input type='submit' class='btn btn-outline-primary' value='ADD'></td></tr>";
+      $("tfoot").html(data);
+	  Loaddatabynameinscheduleinterview();
+	  GetSelectedData();
+    }
+   });
+   
+  }
+ 
+  function load_data_all()
+  {
+   $.ajax({
+    url:"/searchintall",
+    method:"POST",
+    success:function(res)
+    {
+	  intvalues=res;
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td>"+value.int_id+"</td>"+"<td>"+value.name+"</td>"+"<td>"+value.Mobile+"</td>"+"<td>"+value.Email+"</td>"+""+"<td>"+value.role+"</td>"+"<td>"+value.skills+"</td>"+"<td>"+value.testName+"</td>"+"<td>"+value.panelName+"</td>"+ "<td>"+value.addedOn+"</td>"+ "<td><button class='btn btn-info btn-xs btn-edit' >Edit</button><button class='btn btn-danger btn-xs btn-delete'>Delete</button></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  function load_data_interview(query)
+  {
+   $.ajax({
+    url:"/searchintbyname",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td>"+value.int_id+"</td>"+"<td>"+value.name+"</td>"+"<td>"+value.Mobile+"</td>"+"<td>"+value.Email+"</td>"+""+"<td>"+value.role+"</td>"+"<td>"+value.skills+"</td>"+"<td>"+value.testName+"</td>"+"<td>"+value.panelName+"</td>"+ "<td>"+value.addedOn+"</td>"+ "<td><button class='btn btn-info btn-xs btn-edit' >Edit</button><button class='btn btn-danger btn-xs btn-delete'>Delete</button></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  $('#search_text_by_int').keyup(function(){
+    var search = $(this).val();
+    if(search != ''){
+    load_data_interview(search);
+   }else{
+    load_data_interview();
+   }
+  });
+   
+	$("body").on("click", ".btn-secondary", function(){  
+        load_data_all();		  
+    });
+	
+	$('#search_name_for_int').keyup(function(){
+    var search = $(this).val();
+    if(search != ''){
+    load_data_by_name_int(search);
+   }else{
+    load_data_by_name_int();
+   }
+  });
+  
+	$("body").on("click", ".btn-secondary", function(){  
+        load_data_all();		  
+    });
+	
+	// declaring global variables
+	var currentRow;
+	var cur_int_id;
+	var cur_name;
+	var cur_roles;
+	var cur_skills;
+	var cur_mobile;
+	var cur_email;
+	var cur_testName;
+	var cur_panelName;
+	var cur_addedOn;
+	var editmode=false;
+  // Show Input element
+    $("body").on("click", ".btn-edit", function(){  
+		if(editmode==false){
+		currentRow=$(this).closest("tr"); 
+		editmode=true;
+		$(this).parents("tr").find("td:eq(9)").prepend("<button class='btn btn-update'>Update</button><button class='btn btn-cancel'>Cancel</button>");
+		$(this).hide();    
+		$(this).parents("tr").find(".btn-delete").hide();
+		$(this).parents("tr").find("td:not(:last-child)").each(function(i){
+			cur_testName = currentRow.find("td:eq(6)").text();
+			cur_panelName = currentRow.find("td:eq(7)").text();
+		});
+        $(this).parents("tr").find("td:not(:last-child)").each(function(i){
+			if(i=='0'){
+				cur_int_id= currentRow.find("td:eq(0)").text();
+            } else if (i=='1'){
+                var idname = 'name';
+				var fieldtype = 'text';
+				cur_name = currentRow.find("td:eq(1)").text();
+            }else if (i=='2'){
+                var idname = 'mobile';
+				var fieldtype = 'text';
+				cur_mobile = currentRow.find("td:eq(2)").text();
+            }else if (i=='3'){
+                var idname = 'email';
+				var fieldtype = 'text';
+				cur_email = currentRow.find("td:eq(3)").text();
+			}else if (i=='4'){
+                var idname = 'roles';
+				var fieldtype = 'text';
+				cur_roles = currentRow.find("td:eq(4)").text();
+			}else if (i=='5'){
+                var idname = 'skills';
+				var fieldtype = 'text';
+				cur_skills = currentRow.find("td:eq(5)").text();
+			}else if (i=='6'){
+                var idname = 'testName';
+				//cur_testName = currentRow.find("td:eq(6)").text();
+			}else if (i=='7'){
+                var idname = 'panelName';
+				var fieldtype = 'text';
+				//cur_panelName = currentRow.find("td:eq(7)").text();
+			}else if (i=='8'){
+                var idname = 'addedOn';
+				var fieldtype = 'date';
+				cur_addedOn = currentRow.find("td:eq(8)").text();
+			}
+			else{} 
+			if (idname=='roles'){
+				$(this).html('<select id="role"> <option value="Software Engineer">Software Engineer</option> <option value="Data Analyst">Data Analyst</option><option value="Web Developer">Web Developer</option><option value="Product Manager">Product Manager</option></select>');
+			}else if(idname=='skills'){
+				$(this).html("<center><table class='noBorder' id='newtable'><thead><tr class='noBorder'><td class='noBorder'><input type='checkbox' id='add_python' class='skills' value='python'></td><td class='noBorder'><label for='add_python' style='color:black; padding-top:6px;'> Python</label></td></tr><tr class='noBorder'><td class='noBorder';><input type='checkbox' id='add_C++' class='skills' value='C++'></td><td class='noBorder'><label style='color:black; padding-top:6px;' for='add_C++' > C++</label></td></tr><tr class='noBorder'><td class='noBorder'><input type='checkbox' id='add_java' class='skills' value='Java'></td><td class='noBorder'><label for='add_Java' style='color:black; padding-top:6px;'>Java</label></td></tr></thead></table></center>");
+			}else if(idname=='panelName'){
+				var data1="<center><table class='noBorder' id='newtable1'><thead>";
+				$.each(getvalues,function(index,value){
+					if(value.panelName){
+						data1 += "<tr class='noBorder' id='newrow'><td class='noBorder'><input type='checkbox' class='panelName' value="+value.panelName+"/></td><td class='noBorder'><label for='panelName' style='color:black; padding-top:6px;'>"+value.panelName+"</label></td></tr>";
+						}
+					});
+				data1+="</thead></table></center>";
+				$(this).html(data1);
+			}else if(idname=='testName'){
+				var data2="<center><table class='noBorder' id='newtable2'><thead>";
+				$.each(getvalues,function(index,value){
+					if(value.testName){
+						data2 += "<tr class='noBorder'><td class='noBorder'><input type='checkbox' class='testName' value="+value.testName+"/></td><td class='noBorder'><label for='testName' style='color:black; padding-top:6px;'>"+value.testName+"</label></td></tr>";
+						}
+					});
+				data2+="</thead></table></center>";
+				$(this).html(data2);
+			}else if(idname=='addedOn' || idname=='name' || idname=='mobile' || idname=='email' || i!=0){
+			}else{} 
+        }); 
+		}else{
+			alert("There is already one row in edit mode. You cannot edit another at the same time.");
+		}
+		/*
+		$(this).parents("tr").find("td:eq(9)").append("<button class='btn btn-update'>Update</button><button class='btn btn-cancel'>Cancel</button>");
+		$(this).hide();    
+		$(this).parents("tr").find(".btn-delete").hide();
+		*/
+		
+    });
+	
+	$("body").on("click", ".btn-cancel", function(){  
+		var currentRow=$(this).closest("tr"); 
+		editmode=false;
+        $(this).parents("tr").find("td:not(:last-child)").each(function(i){
+            if (i=='1'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_name);
+            }else if (i=='2'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_mobile);
+            }else if (i=='3'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_email);
+			}else if (i=='4'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_roles);
+			}else if (i=='5'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_skills);
+			}else if (i=='6'){
+				$("#newtable2 > thead"). empty();
+				var datanew="<tr class='noBorder'><td class='noBorder'><label style='color:black; padding-top:6px;'>"+cur_testName+"</label></td></tr>";
+				var tableBody = $("#newtable2 > thead");
+                tableBody.append(datanew);
+				//$(this).parents("tr").find('td:eq("' + i + '")').append(datanew);
+			}else if (i=='7'){
+				$("#newtable1 > thead"). empty();
+				var datanew="<tr class='noBorder'><td class='noBorder'><label style='color:black; padding-top:6px;'>"+cur_panelName+"</label></td></tr>";
+				var tableBody = $("#newtable1 > thead");
+                tableBody.append(datanew);
+                //$(this).parents("tr").find('td:eq("' + i + '")').text(cur_panelName);
+			}else if (i=='8'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_addedOn);
+            }else{} 
+        });  
+        $(this).parents("tr").find(".btn-edit").show(); 
+		$(this).parents("tr").find(".btn-delete").show();		
+        $(this).parents("tr").find(".btn-update").remove();  
+        $(this).parents("tr").find(".btn-cancel").remove();  
+    }); 
+	
+	$("body").on("click", ".btn-update", function(){  
+        var string = cur_int_id;
+		var table="sched_interview";
+        var role = $("#role").val();
+		var insert_skills = [];
+		$('.skills').each(function() {
+			if ($(this).is(":checked")) 
+			{
+                insert_skills.push($(this).val());
+            }
+        });       
+        var skills = insert_skills.toString();
+		var insert_testName = [];
+		$('.testName').each(function() {
+			if ($(this).is(":checked")) 
+			{
+                insert_testName.push($(this).val());
+            }
+        });       
+        var testName = insert_testName.toString();
+		var insert_panelName = [];
+		$('.panelName').each(function() {
+			if ($(this).is(":checked")) 
+			{
+                insert_panelName.push($(this).val());
+            }
+        });       
+        var panelName = insert_panelName.toString();
+		$.post("/table_update", { table: table,string: string, role: role, skills: skills, testName: testName, panelName: panelName}, function(data) {
+            $("#displaymessage").html(data);
+            $("#displaymessage").show();
+			alert("Record Updated Successfully. Site needs to reload.");
+			location.reload();
+        });
+		
+          
+        $(this).parents("tr").find(".btn-edit").show();  
+		$(this).parents("tr").find(".btn-delete").show();
+        $(this).parents("tr").find(".btn-cancel").remove();  
+        $(this).parents("tr").find(".btn-update").remove();  
+    });
+	
+	$("body").on("click", ".btn-delete", function(){  
+		if (confirm("Are you sure you want delete this record?") == true)
+		{
+			currentRow=$(this).closest("tr"); 
+			cur_int_id= currentRow.find("td:eq(0)").text();
+			$(this).parents("tr").remove();
+			var string = cur_int_id;
+			var table="sched_interview";
+			$.post("/cand_delete", { table: table, string: string}, function(data) {
+				$("#displaymessage").html(data);
+				$("#displaymessage").show();
+			});
+		}else{}
+    });
+	
+	$("body").on("click", ".btn-outline-primary", function(){  
+		var table="sched_interview";
+		$('#myTable > tbody  > tr').each(function(index, tr) {
+			$(tr).find("td:not(:last-child)").each(function(i){
+				if (i=='1'){
+					cur_name = $(tr).find("td:eq(1)").text();
+				}else if (i=='2'){
+					cur_mobile = $(tr).find("td:eq(2)").text();
+				}else if (i=='3'){
+					cur_email = $(tr).find("td:eq(3)").text();
+				}else{} 
+			});  
+			var role = $("#add_role").val();
+			var insert_skills = [];
+			$('.add_skills').each(function() {
+				if ($(this).is(":checked")) 
+				{
+					insert_skills.push($(this).val());
+				}
+			});       
+			var skills = insert_skills.toString();
+			var insert_testName = [];
+			$('.add_testName').each(function() {
+				if ($(this).is(":checked")) 
+				{
+					insert_testName.push($(this).val());
+				}
+			});       
+			var testName = insert_testName.toString();
+			var insert_panelName = [];
+			$('.add_panelName').each(function() {
+				if ($(this).is(":checked")) 
+				{
+					insert_panelName.push($(this).val());
+				}
+			});       
+			var panelName = insert_panelName.toString();
+        //var skills = $("input[name=add_skills]").val();
+			$.post("/cand_add", { table: table,name: cur_name, mobile: cur_mobile,email: cur_email, role: role, skills: skills, testName: testName, panelName: panelName}, function(data) {
+				$("#displaymessage").html(data);
+				$("#displaymessage").show();
+			
+			});
+		  
+		});
+    });
+	
+});
+</script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lusitana&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/test.css') }}">
+<!--link rel= "stylesheet"  href= "cand.css"-->
+</head>
+<body>
+<div class="page">
+  <header tabindex="0">Schedule an Interview </header>
+  <div class="sidebar">
+<ul>
+        <li><a href="{{ url_for('dashboard') }}" ><span>Home</span></a></li>
+		<li><a href="{{ url_for('hrafterlogin') }}"><span>Add HR</span></a></li>
+        <li><a href="{{ url_for('panel') }}"><span>Add Panel</span></a></li>
+		<li><a href="{{ url_for('test') }}"><span>Add Test</span></a></li>
+		<li><a href="{{ url_for('cand') }}" ><span>Add Candidate</span></a></li>
+		<div class="active">
+		<li><a href="{{ url_for('interview') }}"><span>Schedule Interview</span></a></li>
+		</div>
+		<li><a href="{{ url_for('executeint') }}" ><span>Execute Interview</span></a></li>
+		<li><a href="{{ url_for('execute') }}"><span>Interview Result</span></a></li>
+		
+        <li class="small"><a href="{{ url_for('logout') }}"class="arrow"><span>Logout</span></a></li>
+      </ul>
+</div>
+<div align="center">
+<div class="container">
+<div class="table-responsive"> 
+<div class="module">
+<div class='btn btn-warning' id="displaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+<div class='btn btn-success' id="successdisplaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+<table class="table table-bordered" id="myTable">
+  <thead>
+		 <th></th>
+         <th><input type="text" id="search_text_by_int" name="search_text_by_int" placeholder="Search interview"/></th>
+         <th></th>
+         <th></th>
+		 <th ></th>
+		 <th ></th>
+		 <th style="width:20%;"></th>
+		 <th ></th>
+		 <th></th>
+		 <th ><input type="submit" class="btn btn-secondary" value="Search All"></th>
+      </tr>
+	  <thead>
+	  <tr>
+		 <th>ID</th>
+         <th> Name</th>
+		 <th style="width:40px;"> Mobile</th>
+		 <th style="width:40px;"> Email</th>
+         <th  style="width:80px;"> Role</th>
+         <th> Skills</th>
+		 <th> Test</th>
+		 <th> Panel Interview</th>
+		 <th> Date</th>
+		 <th style="width:60px;">Register/Edit</th>
+      </tr>
+	  </thead>
+	  <tbody>
+   </tbody>
+	  <tfoot><div id="myrow"></div> 
+   </tfoot>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

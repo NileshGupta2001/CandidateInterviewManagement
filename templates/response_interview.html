@@ -1,0 +1,220 @@
+<!--script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script-->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  // declaring global variables
+	var currentRow;
+	var cur_fdate;
+	var cur_fname;
+	var cur_frate;
+	var cur_sdate;
+	var cur_srate;
+	var cur_sname;
+	var cur_interview_id;
+  // Show Input element
+    $("body").on("click", ".btn-edit", function(){  
+		currentRow=$(this).closest("tr"); 
+        $(this).parents("tr").find("td:not(:last-child)").each(function(i){
+			if(i=='0'){
+				cur_interview_id= currentRow.find("td:eq(0)").text();
+            } else if (i=='1'){
+                var idname = 'fdate';
+				var fieldtype = 'date';
+				cur_fdate = currentRow.find("td:eq(1)").text();
+            }else if (i=='2'){
+                var idname = 'fname';
+				var fieldtype = 'text';
+				cur_fname = currentRow.find("td:eq(2)").text();
+            }else if (i=='3'){
+                var idname = 'frate';
+				var fieldtype = 'text';
+				cur_frate = currentRow.find("td:eq(3)").text();
+			}else if (i=='4'){
+                var idname = 'sdate';
+				var fieldtype = 'date';
+				cur_sdate = currentRow.find("td:eq(4)").text();
+			}else if (i=='5'){
+                var idname = 'sname';
+				var fieldtype = 'text';
+				cur_sname = currentRow.find("td:eq(5)").text();
+			}else if (i=='6'){
+                var idname = 'srate';
+				var fieldtype = 'text';
+				cur_srate = currentRow.find("td:eq(6)").text();
+            }else{} 
+			if(i!=0){
+			$(this).html('<input type="' + fieldtype + '" name="updaterec" id="' + idname + '"  value="' + $(this).text() + '">');
+			}else{} 
+        }); 
+		$(this).parents("tr").find("td:eq(7)").prepend("<button class='btn btn-info btn-update'>Update</button><button class='btn btn-warning  btn-cancel'>Cancel</button>");
+		$(this).hide();  
+		/*
+		$( this ).parents("tr").find("td:eq(7)").replaceWith( "<button class='btn btn-info btn-update'>Update</button><button class='btn btn-warning  btn-cancel'>Cancel</button>" );
+		*/
+    });  
+	
+	$("body").on("click", ".btn-cancel", function(){ 
+		var currentRow=$(this).closest("tr"); 
+        $(this).parents("tr").find("td:not(:last-child)").each(function(i){
+            if (i=='1'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_fdate);
+            }else if (i=='2'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_fname);
+            }else if (i=='3'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_frate);
+			}else if (i=='4'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_sdate);
+			}else if (i=='5'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_sname);
+			}else if (i=='6'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_srate);
+            }else{} 
+        });  
+		
+        $(this).parents("tr").find(".btn-edit").show();  
+        $(this).parents("tr").find(".btn-update").remove();  
+        $(this).parents("tr").find(".btn-cancel").remove(); 
+		
+		
+		/*$( this ).parents("tr").find("td:eq(7)").replaceWith( "<button class='btn btn-info btn-xs btn-edit'  >Edit</button><button class='btn btn-danger btn-xs btn-delete' >Delete</button>" );*/
+    });  
+	
+	$("body").on("click", ".btn-update", function(){  
+        var string = cur_interview_id;
+        var fdate = $("#fdate").val();
+        var fname = $("#fname").val();
+        var frate = $("#frate").val();
+		var sdate = $("#sdate").val();
+		var sname = $("#sname").val();
+		var srate = $("#srate").val();
+		$.post("/int_update", { string: string,fname: fname, fdate: fdate, frate:frate, sdate: sdate, sname: sname,srate: srate}, function(data) {
+            $("#displaymessage").html(data);
+            $("#displaymessage").show();
+			location.reload();
+        });
+		
+          
+        $(this).parents("tr").find(".btn-edit").show();  
+        $(this).parents("tr").find(".btn-cancel").remove();  
+        $(this).parents("tr").find(".btn-update").remove();  
+    }); 
+
+	$("body").on("click", ".btn-outline-primary", function(){  
+        var fdate = $("#add_fdate").val();
+        var fname = $("#add_fname").val();
+        var frate = $("#add_frate").val();
+		var sdate = $("#add_sdate").val();
+		var sname = $("#add_sname").val();
+		var srate = $("#add_srate").val();
+		$.post("/int_add", {fname: fname, fdate: fdate, frate:frate, sdate: sdate, sname: sname,srate: srate}, function(data) {
+            $("#displaymessage").html(data);
+            $("#displaymessage").show();
+        });
+		  
+    }); 
+
+	
+	$("body").on("click", ".btn-delete", function(){  
+		currentRow=$(this).closest("tr"); 
+		cur_interview_id= currentRow.find("td:eq(0)").text();
+        $(this).parents("tr").remove();
+        var string = cur_interview_id;
+        $.post("/int_delete", { string: string}, function(data) {
+            $("#displaymessage").html(data);
+            $("#displaymessage").show();
+        });
+    });  
+  	
+  
+});
+</script>
+<div class='btn btn-info' id="displaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+<table class="table table-bordered">
+  <thead>
+      <tr>
+		 <th>Interview ID</th>
+		 <th>First Interview Date</th>
+         <th>First Interview By</th>
+         <th>First Interview Average Rating</th>
+         <th>Second Interview Date</th>
+		 <th>Second Interview By</th>
+		 <th>Second Interview Average Rating</th>
+		 <th>Edit/Delete</th>
+      </tr>
+  </thead>
+  <tbody>
+  {% for row in interview %}  
+   <tr>
+    <td>{{row[0]}}</td>
+    <td>
+	{{row[1]}}
+	</td>
+    <td>
+	{{row[2]}}
+	</td>
+	<td>
+	{{row[3]}}
+	</td>
+	<td>
+	{{row[4]}}
+	</td>
+	<td>
+	{{row[5]}}
+	</td>
+	<td>
+	{{row[6]}}
+	</td>
+	<td>
+	<button class='btn btn-info btn-xs btn-edit'  >Edit</button><button class='btn btn-danger btn-xs btn-delete' >Delete</button>
+    </td>
+   </tr>
+    </tbody>
+{% endfor %} 
+ <!--form action="https://candidateinterview.azurewebsites.net/candsuc" method="post"-->
+	<tr>
+	<!--form action="https://candidateinterview.azurewebsites.net/intsuc" method="post"class="module-border-wrap"-->
+	<!--form action="http://127.0.0.1:5000/intsuc" method="post"-->
+	<td></td>
+	<td>
+	<div class="impfield">
+	<input type="date" placeholder="(dd-mm-yyyy):" name="fdate" id="add_fdate">
+	<label for="fdate">*</label></div>
+	<div class="hide">Required</div>
+	</td>
+	<td >
+	<div class="impfield">
+	<input type="text" size="15" placeholder="Enter First Interviewee name:" name="fname" id="add_fname">
+	<label for="fname">*</label></div>
+	<div class="hide">Required</div>
+	</td>
+    <td >
+	<div class="impfield">
+	<input type="text" size="13" placeholder="Enter rating" name="frate" id="add_frate">
+	<label for="frate">*</label></div>
+	<div class="hide">Required</div>
+	</td>
+	<td>
+	<div class="impfield">
+	<input type="date" placeholder="(dd-mm-yyyy):" name="sdate" id="add_sdate">
+	<label for="sdate">*</label></div>
+	<div class="hide">Required</div>
+	</td>
+	<td >
+	<div class="impfield">
+	<input type="text" size="15" placeholder="Enter Second Interviewee name:" name="sname" id="add_sname">
+	<label for="sname">*</label></div>
+	<div class="hide">Required.</div>
+	</td>
+	<td>
+	<div class="impfield">
+	<input type="text" size="13" placeholder="Enter rating:" name="srate"  id="add_srate">
+	<label for="srate">*</label></div>
+	<div class="hide">Required</div>
+	</td>
+	<td>
+	<input type="submit" class="btn btn-outline-primary" value="SUBMIT">
+	</td>
+	<!--/form-->
+   </tr>
+   <!--/form-->
+  </table>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview form</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+
+  var getvalues;
+  new_input();  
+  function new_input()
+  {
+   $.ajax({
+    url:"/interviewrecords",
+    method:"POST",
+    success:function(res)
+    {
+	  getvalues=res;
+	  var data = "<tr><td></td><td><input type='text' size='15' placeholder='Search name:' id='search_text_by_intname' name='search_text_by_intname' class='search_text_by_intname'/></td><td></td><td></td><td><select id='add_role'><option value='Software Engineer'>Software Engineer</option> <option value='Data Analyst'>Data Analyst</option><option value='Web Developer'>Web Developer</option><option value='Product Manager'>Product Manager</option></select></td><td><center><table class='noBorder' id='newtable'><thead><tr class='noBorder'><td class='noBorder'><input type='checkbox' id='add_python' class='add_skills' value='python'></td><td class='noBorder'><label for='add_python' style='color:black; padding-top:6px;'> Python</label></td></tr><tr class='noBorder'><td class='noBorder';><input type='checkbox' id='add_C++' class='add_skills' value='C++'></td><td class='noBorder'><label style='color:black; padding-top:6px;' for='add_C++' > C++</label></td></tr><tr class='noBorder'><td class='noBorder'><input type='checkbox' id='add_java' class='add_skills' value='Java'></td><td class='noBorder'><label for='add_Java' style='color:black; padding-top:6px;'>Java</label></td></tr></thead></table></center></td><td><center><table class='noBorder' id='newtable'><thead>";
+	   
+      $.each(res,function(index,value){
+		if(value.testName){
+				data += "<tr class='noBorder'><td class='noBorder'><input type='checkbox' class='add_testName' value="+value.testName+"></td><td class='noBorder'><label for='add_skills' style='color:black; padding-top:6px;'>"+value.testName+"</label></td></tr>";
+            }
+      });
+	  data+="</thead></table></center></td><td><center><table class='noBorder' id='newtable'><thead>";
+	  $.each(res,function(index,value){
+		if(value.panelName){
+				data += "<tr class='noBorder'><td class='noBorder'><input type='checkbox' class='add_panelName' value="+value.panelName+"></td><td class='noBorder'><label for='add_skills' style='color:black; padding-top:6px;'>"+value.panelName+"</label></td></tr>";
+            }
+      });
+	  data+="</thead></table></center></td><td></td><td><input type='submit' class='btn btn-outline-primary' value='ADD'></td></tr>";
+      $("tfoot").html(data);
+    }
+   });
+  }
+  
+  function load_data(query)
+  {
+  alert("function");
+   $.ajax({
+    url:"/searchcand",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td></td>"+"<td>"+value.username+"</td>"+"<td>"+value.mobile+"</td>"+"<td>"+value.email+"</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  function load_data_by_mobile(query)
+  {
+   $.ajax({
+    url:"/searchcandbymobile",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td></td>"+"<td>"+value.username+"</td>"+"<td>"+value.mobile+"</td>"+"<td>"+value.email+"</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  function load_data_by_email(query)
+  {
+   $.ajax({
+    url:"/searchcandbyemail",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td></td>"+"<td>"+value.username+"</td>"+"<td>"+value.mobile+"</td>"+"<td>"+value.email+"</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>";";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  $('.search_text_by_name').keyup(function(){
+    var search = $(this).val();
+    if(search != ''){
+    load_data(search);
+   }else{
+    load_data();
+   }
+  });
+  /*
+  $('.search_text_by_name').keyup(function(){
+  //debugger;
+  alert("Hello");
+    var search = $(this).val();
+    if(search != ''){
+    load_data(search);
+   }else{
+    load_data();
+   }
+  });
+  */
+});
+</script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lusitana&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/test.css') }}">
+<!--link rel= "stylesheet"  href= "cand.css"-->
+</head>
+<body>
+<div class="page">
+  <header tabindex="0">Interview Rating Form</header>
+  <div class="sidebar">
+<ul>
+        <li><a href="{{ url_for('dashboard') }}" ><span>Home</span></a></li>
+		<li><a href="{{ url_for('hrafterlogin') }}"><span>Add HR</span></a></li>
+        <li><a href="{{ url_for('panel') }}"><span>Add Panel</span></a></li>
+		<li><a href="{{ url_for('test') }}"><span>Add Test</span></a></li>
+		<li><a href="{{ url_for('cand') }}" ><span>Add Candidate</span></a></li>
+		<li><a href="{{ url_for('interview') }}"><span>Schedule Interview</span></a></li>
+		<div class="active">
+		<li><a href="{{ url_for('newinterview') }}"><span>TESTRUN Interview Page</span></a></li>
+		</div>
+		<li><a href="#exe" ><span>Execute Interview</span></a></li>
+		<li><a href="{{ url_for('execute') }}"><span>Interview Result</span></a></li>
+		
+        <li class="small"><a href="{{ url_for('logout') }}"class="arrow"><span>Logout</span></a></li>
+      </ul>
+</div>
+<div align="center">
+<div class="container">
+<div class="table-responsive"> 
+<div class="module">
+<div class='btn btn-warning' id="displaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+<div class='btn btn-success' id="successdisplaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+<table class="table table-bordered">
+  <thead>
+		 <th></th>
+         <th><input type="text" id="search_text_by_name" name="search_text_by_name" placeholder="Search interview"/></th>
+         <th><input type="text" id="search_text_by_mobile" name="search_text_by_mobile" placeholder="Search mobile"/></</th>
+         <th><input type="text" id="search_text_by_email" name="search_text_by_email" placeholder="Search email"/></th>
+		 <th ></th>
+		 <th ></th>
+		 <th style="width:20%;"></th>
+		 <th ></th>
+		 <th></th>
+		 <th ><input type="submit" class="btn btn-secondary" value="Search All"></th>
+      </tr>
+	  <thead>
+	  <tr>
+		 <th>ID</th>
+         <th> Name</th>
+		 <th style="width:80px;"> Mobile</th>
+		 <th style="width:80px;"> Email</th>
+         <th  style="width:80px;"> Role</th>
+         <th> Skills</th>
+		 <th> Test</th>
+		 <th> Panel Interview</th>
+		 <th> Date</th>
+		 <th style="width:60px;">Register/Edit</th>
+      </tr>
+	  </thead>
+	  <tbody>
+   </tbody>
+	  <tfoot><div id="myrow"></div> 
+   </tfoot>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

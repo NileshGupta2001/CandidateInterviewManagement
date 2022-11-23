@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }} {{username}}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<title>Interview Form</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  load_data();
+  function load_data(query)
+  {
+   $.ajax({
+    url:"/searchint",
+    method:"POST",
+    data:{query:query},
+    success:function(data)
+    {
+      $('#result').html(data);
+      $("#result").append(data.htmlresponse);
+    }
+   });
+  }
+  $('#search_text').keyup(function(){
+    var search = $(this).val();
+    if(search != ''){
+    load_data(search);
+   }else{
+    load_data();
+   }
+  });
+ 
+});
+</script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lusitana&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/cand.css') }}">
+<!--link rel= "stylesheet"  href= "cand.css"-->
+</head>
+<body>
+<div class="page">
+  <header tabindex="0">Interview Rating Form</header>
+  <div id="nav-container">
+    <div class="bg"></div>
+    <div class="button" tabindex="0">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <<div id="nav-content" tabindex="0">
+      <ul>
+        <li><a href="{{ url_for('dashboard') }}" class="arrow"><span>Home</span></a></li>
+		<li><a href="{{ url_for('hrafterlogin') }}"class="arrow"><span>Add HR</span></a></li>
+        <li><a href="{{ url_for('panel') }}"class="arrow"><span>Add Panel</span></a></li>
+		<li><a href="{{ url_for('test') }}"class="arrow"><span>Add Test</span></a></li>
+		<li><a href="{{ url_for('cand') }}" class="arrow"><span>Add Candidate</span></a></li>
+		<li><a href="{{ url_for('interview') }}"class="arrow"><span>Schedule Interview</span></a></li>
+		<li><a href="#execute" class="arrow"><span>Execute Interview</span></a></li>
+		<li><a href="#about"class="arrow"><span>Interview Result</span></a></li>
+		
+        <li class="small"><a href="{{ url_for('logout') }}"class="arrow"><span>Logout</span></a></li>
+      </ul>
+    </div>
+  </div>
+<div align="center">
+<div class="container search-table">
+            <div class="search-box">
+                <div class="row">
+                    <div class="col-md-3" style="position:static;" >
+                        <h3>Search All Fields:</h3><br>
+                    </div>
+                    <div class="col-md-9" style="position:static;">
+                        <input type="text" name="search_text" id="search_text"  class="form-control" placeholder="Search here e.g. Name">
+                    </div> 
+                </div>
+            </div>
+   <!--div id="result"></div-->
+</div>
+<div class="container">
+<div class="table-responsive"> 
+<div class="module">
+<div id="result"></div>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

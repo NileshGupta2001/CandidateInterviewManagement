@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head> 
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Flask Live Data Search using Jquery Ajax and MySql Database</title>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  load_data();
+  function load_data(query)
+  {
+   $.ajax({
+    url:"/ajaxlivesearch",
+    method:"POST",
+    data:{query:query},
+    success:function(data)
+    {
+      $('#result').html(data);
+      $("#result").append(data.htmlresponse);
+    }
+   });
+  }
+  $('#search_text').keyup(function(){
+    var search = $(this).val();
+    if(search != ''){
+    load_data(search);
+   }else{
+    load_data();
+   }
+  });
+});
+</script>
+</head>
+<body>
+  <div class="page">
+  <header tabindex="0">Header</header>
+  <div id="nav-container">
+    <div class="bg"></div>
+    <div class="button" tabindex="0">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div id="nav-content" tabindex="0">
+      <ul>
+        <li><a href="{{ url_for('dashboard') }}" class="arrow"><span>Home</span></a></li>
+        <li><a href="{{ url_for('search') }}" class="arrow"><span>Search</span></a></li>
+        <li><a href="{{ url_for('customerreg') }}"class="arrow"><span>Add Candidate</span></a></li>
+        <li><a href="{{ url_for('interview') }}"class="arrow"><span>Schedule Interview</span></a></li>
+        <li><a href="{{ url_for('panel') }}"class="arrow"><span>Add Panel</span></a></li>
+		<li><a href="{{ url_for('hrafterlogin') }}"class="arrow"><span>Add HR</span></a></li>
+		<li><a href="{{ url_for('test') }}"class="arrow"><span>Add Test</span></a></li>
+		<li><a href="#about"class="arrow"><span>Interview Result</span></a></li>
+        <li class="small"><a href="{{ url_for('logout') }}"class="arrow"><span>Logout</span></a></li>
+      </ul>
+    </div>
+  </div>
+<div class="container search-table">
+<p><h2 align="center">Candidate Registration</h2></p>
+            <div class="search-box">
+                <div class="row">
+                    <div class="col-md-3">
+                        <h5>Search All Fields</h5>
+                    </div>
+                    <div class="col-md-9">
+                        <input type="text" name="search_text" id="search_text" class="form-control" placeholder="Search all fields e.g. HTML">
+                    </div> 
+                </div>
+            </div>
+   <div id="result"></div>
+</div>
+<form action="http://127.0.0.1:5000/candsuc" method="post">
+<div class="container">
+<div class="table-responsive"> 
+<div class="module">
+<table class="table">
+  <thead>
+      <tr>
+         <th>Name</th>
+         <th>DOB</th>
+         <th>Gender</th>
+		 <th>Mobile</th>
+		 <th>Email</th>
+		 <th>Password</th>
+      </tr>
+  </thead>
+  <tbody>
+  <tr>
+	<td>
+	<div class="impfield">
+	<input type="text" size="25" placeholder="Enter your name:" name="username">	
+	<label for="username">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+    <td>
+	<input type="date" placeholder="Enter DOB(dd-mm-yyyy):" name="dob" >
+	</td>
+    <td>
+	<div class="impfield">
+	Male:
+	<input type="radio" name="gender" value="male" />Female:
+	<input type="radio" name="gender" value="female" />Other:
+	<input type="radio" name="gender" value="other" />
+	<label for="gender">*</label></div>
+	<div class="hide">It is a necessary field.</div><br>
+	</td>
+	<td>
+	<div class="impfield">
+	<input type="text" size="25" placeholder="Enter your mobile number" name="mobile" />
+	<label for="gender">*</label></div>
+	<div class="hide">It is a necessary field.</div><br>
+	</td>
+	<td>
+	<div class="impfield">
+	<input type="text" size="30" placeholder="Enter your email id" name="email" />
+	<label for="email">*</label></div>
+	<div class="hide">It is a necessary field.</div><br>
+	</td>
+	<td>
+	<div class="impfield">
+	<input type="password" size="30" id="pwd" name="pwd" minlength="8" />
+	<label for="pwd">*</label></div>
+	<div class="hide">It is a necessary field. Passwords must be of min length 8 and must contain a digit.</div>
+	<input type="submit" value="SUBMIT"><br>
+	</td>
+   </tr>
+   </tbody>
+  </table>
+</div>
+</div>
+</div>
+</div>
+<style>
+.page {
+  width: 100%;
+  height: 100vh;
+  background: #fdfdfd;
+  font-family: 'Encode Sans Condensed', sans-serif;
+  font-weight: 600;
+  letter-spacing: .03em;
+  color: #212121;
+}
+
+header {
+  display: flex;
+  position: fixed;
+  width: 100%;
+  height: 70px;
+  background: #212121;
+  color: #fff;
+  justify-content: center;
+  align-items: center;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+#nav-container {
+  position: fixed;
+  height: 100vh;
+  width: 100%;
+  pointer-events: none;
+}
+#nav-container .bg {
+  position: absolute;
+  top: 70px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 70px);
+  visibility: hidden;
+  opacity: 0;
+  transition: .3s;
+  background: #000;
+}
+#nav-container:focus-within .bg {
+  visibility: visible;
+  opacity: .6;
+}
+#nav-container * {
+  visibility: visible;
+}
+
+.button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  z-index: 1;
+  -webkit-appearance: none;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  height: 70px;
+  width: 30px;
+  cursor: pointer;
+  pointer-events: auto;
+  margin-left: 25px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
+.icon-bar {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: #aaa;
+  transition: .3s;
+}
+.icon-bar + .icon-bar {
+  margin-top: 5px;
+}
+
+#nav-container:focus-within .button {
+  pointer-events: none;
+}
+#nav-container:focus-within .icon-bar:nth-of-type(1) {
+  transform: translate3d(0,8px,0) rotate(45deg);
+}
+#nav-container:focus-within .icon-bar:nth-of-type(2) {
+  opacity: 0;
+}
+#nav-container:focus-within .icon-bar:nth-of-type(3) {
+  transform: translate3d(0,-8px,0) rotate(-45deg);
+}
+
+#nav-content {
+  margin-top: 70px;
+  padding: 20px;
+  width: 90%;
+  max-width: 300px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: calc(100% - 70px);
+  background: #ececec;
+  pointer-events: auto;
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+  transform: translateX(-100%);
+  transition: transform .3s;
+  will-change: transform;
+  contain: paint;
+}
+
+#nav-content ul {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#nav-content li a {
+  padding: 10px 5px;
+  display: block;
+  text-transform: uppercase;
+  transition: color .1s;
+}
+
+#nav-content li a:hover {
+  color: #BF7497;
+}
+
+#nav-content li:not(.small) + .small {
+  margin-top: auto;
+}
+
+.small {
+  display: flex;
+  align-self: center;
+}
+
+.small a {
+  font-size: 12px;
+  font-weight: 400;
+  color: #888;
+}
+.small a + a {
+  margin-left: 15px;
+}
+
+#nav-container:focus-within #nav-content {
+  transform: none;
+}
+
+a,
+a:visited,
+a:focus,
+a:active,
+a:link {
+  text-decoration: none;
+  outline: 0;
+}
+
+a {
+  color: currentColor;
+  transition: .2s ease-in-out;
+}
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.arrow span {
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  transition: 0.5s;
+}
+
+.arrow{
+  transition: all 0.5s;
+  cursor: pointer;
+}
+
+.arrow span:after {
+  content: '\00bb';
+  position: absolute;
+  opacity: 0;
+  top: 0;
+  right: -20px;
+  transition: 0.5s;
+}
+
+.arrow:hover span {
+  padding-right: 25px;
+}
+
+.arrow:hover span:after {
+  opacity: 1;
+  right: 0;
+}
+
+label {
+color: #F50047;
+font-weight: bold;
+}
+.module {
+  background: #E7E7E7;
+  color: black;
+  padding: 2rem;
+}
+.hide {
+  /*display: none;*/
+  opacity: 0;
+}
+
+.impfield:hover + .hide {
+  opacity: 1;
+  color: red;
+}
+.container {
+  max-width: 4000px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.search-table{
+    padding: 10%;
+    margin-top: -6%;
+}
+.search-box{
+    background: #c1c1c1;
+    border: 1px solid #ababab;
+    padding: 3%;
+}
+.search-box input:focus{
+    box-shadow:none;
+    border:2px solid #eeeeee;
+}
+.search-list{
+    background: #fff;
+    border: 1px solid #ababab;
+    border-top: none;
+}
+.search-list h3{
+    background: #eee;
+    padding: 3%;color:#fe6f41;
+    margin-bottom: 0%;
+}
+</style>
+</body>
+</html>

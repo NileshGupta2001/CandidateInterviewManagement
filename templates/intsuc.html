@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Success Form</title>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lusitana&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/candreg.css') }}">
+</head>
+<body>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lusitana&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/cand.css') }}">
+<!--link rel= "stylesheet"  href= "cand.css"-->
+</head>
+<body>
+<div class="page">
+  <header tabindex="0">Interview Rating Form</header>
+  <div id="nav-container">
+    <div class="bg"></div>
+    <div class="button" tabindex="0">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </div>
+    <div id="nav-content" tabindex="0">
+      <ul>
+        <li><a href="{{ url_for('dashboard') }}" class="arrow"><span>Home</span></a></li>
+        <li><a href="{{ url_for('cand') }}" class="arrow"><span>Add Candidate</span></a></li>
+        <li><a class="active" href="{{ url_for('interview') }}"class="arrow"><span>Schedule Interview</span></a></li>
+        <li><a href="{{ url_for('panel') }}"class="arrow"><span>Add Panel</span></a></li>
+		<li><a href="{{ url_for('hrafterlogin') }}"class="arrow"><span>Add HR</span></a></li>
+		<li><a href="{{ url_for('test') }}"class="arrow"><span>Add Test</span></a></li>
+		<li><a href="#about"class="arrow"><span>Interview Result</span></a></li>
+        <li class="small"><a href="{{ url_for('logout') }}"class="arrow"><span>Logout</span></a></li>
+      </ul>
+    </div>
+  </div>
+<div align="center">
+<h1>INTERVIEW DETAILS HAVE BEEN SUCCESSFULLY ADDED!</h1>
+<a href="{{ url_for('interview') }}">
+Schedule another interview?</a>
+</div>
+</body>
+</html>

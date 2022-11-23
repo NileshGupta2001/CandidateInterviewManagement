@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create a test</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  
+  load_data_all();
+  function load_data_all()
+  {
+   $.ajax({
+    url:"/searchtestall",
+    method:"POST",
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td>"+value.testID+"</td>"+"<td>"+value.testName+"</td>"+"<td>"+value.testSkill+"</td>"+"<td>"+value.testLevel+"</td>"+"<td>"+value.testWeightage+"</td>"+"<td>"+value.questionCount+"</td>"+ "<td><button class='btn btn-info btn-xs btn-edit' >Edit</button><button class='btn btn-danger btn-xs btn-delete'>Delete</button></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  function load_data_by_name(query)
+  {
+   $.ajax({
+    url:"/searchtestbyname",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td>"+value.testID+"</td>"+"<td>"+value.testName+"</td>"+"<td>"+value.testSkill+"</td>"+"<td>"+value.testLevel+"</td>"+"<td>"+value.testWeightage+"</td>"+"<td>"+value.questionCount+"</td>"+ "<td><button class='btn btn-info btn-xs btn-edit' >Edit</button><button class='btn btn-danger btn-xs btn-delete'>Delete</button></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  function load_data_by_skills(query)
+  {
+   $.ajax({
+    url:"/searchtestbyskills",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td>"+value.testID+"</td>"+"<td>"+value.testName+"</td>"+"<td>"+value.testSkill+"</td>"+"<td>"+value.testLevel+"</td>"+"<td>"+value.testWeightage+"</td>"+"<td>"+value.questionCount+"</td>"+ "<td><button class='btn btn-info btn-xs btn-edit' >Edit</button><button class='btn btn-danger btn-xs btn-delete'>Delete</button></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  $('#search_text_by_name').keyup(function(){
+    var search = $(this).val();
+    if(search != ''){
+    load_data_by_name(search);
+   }else{
+    load_data_by_name();
+   }
+  });
+  $('#search_text_by_skills').keyup(function(){
+    var search = $(this).val();
+    if(search != ''){
+    load_data_by_skills(search);
+   }else{
+    load_data_by_skills();
+   }
+  });
+  
+  // declaring global variables
+	var currentRow;
+	var cur_testName;
+	var cur_testSkill;
+	var cur_testWeightage;
+	var cur_testLevel;
+	var cur_questionCount;
+	var cur_testID;
+  // Show Input element
+    $("body").on("click", ".btn-edit", function(){  
+		currentRow=$(this).closest("tr"); 
+        $(this).parents("tr").find("td:not(:last-child)").each(function(i){
+			if(i=='0'){
+				cur_testID= currentRow.find("td:eq(0)").text();
+            } else if (i=='1'){
+                var idname = 'testName';
+				var fieldtype = 'text';
+				cur_testName = currentRow.find("td:eq(1)").text();
+            }else if (i=='2'){
+                var idname = 'testSkill';
+				var fieldtype = 'text';
+				cur_testSkill = currentRow.find("td:eq(2)").text();
+            }else if (i=='3'){
+                var idname = 'testLevel';
+				var fieldtype = 'text';
+				cur_testLevel = currentRow.find("td:eq(3)").text();
+			}else if (i=='4'){
+                var idname = 'testWeightage';
+				var fieldtype = 'text';
+				cur_testWeightage = currentRow.find("td:eq(4)").text();
+			}else if (i=='5'){
+                var idname = 'questionCount';
+				var fieldtype = 'text';
+				cur_questionCount = currentRow.find("td:eq(5)").text();
+			}
+			else{} 
+			
+			if(i!=0){
+			$(this).html('<input type="' + fieldtype + '" name="updaterec" id="' + idname + '" size="7" value="' + $(this).text() + '">');
+			}else{} 
+        }); 
+		
+		$(this).parents("tr").find("td:eq(6)").prepend("<button class='btn btn-update'>Update</button><button class='btn btn-cancel'>Cancel</button>");
+		$(this).hide();    
+		$(this).parents("tr").find(".btn-delete").hide();
+		
+    });  
+	
+	$("body").on("click", ".btn-cancel", function(){  
+		var currentRow=$(this).closest("tr"); 
+        $(this).parents("tr").find("td:not(:last-child)").each(function(i){
+            if (i=='1'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_testName);
+            }else if (i=='2'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_testSkill);
+            }else if (i=='3'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_testLevel);
+			}else if (i=='4'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_testWeightage);
+			}else if (i=='5'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_questionCount);
+            }else{} 
+        });  
+        $(this).parents("tr").find(".btn-edit").show(); 
+		$(this).parents("tr").find(".btn-delete").show();		
+        $(this).parents("tr").find(".btn-update").remove();  
+        $(this).parents("tr").find(".btn-cancel").remove();  
+    });  
+	
+	$("body").on("click", ".btn-update", function(){  
+        var string = cur_testID;
+		var table="test";
+        var testName = $("#testName").val();
+        var testSkill = $("#testSkill").val();
+        var testLevel = $("#testLevel").val();
+		var testWeightage = $("#testWeightage").val();
+		var questionCount = $("#questionCount").val();
+		$.post("/table_update", { table: table,string: string,testName: testName, testSkill: testSkill, testLevel:testLevel, testWeightage: testWeightage, questionCount: questionCount}, function(data) {
+            $("#displaymessage").html(data);
+            $("#displaymessage").show();
+			alert("Record Updated Successfully. Site needs to reload.");
+			location.reload();
+        });
+		
+          
+        $(this).parents("tr").find(".btn-edit").show();  
+		$(this).parents("tr").find(".btn-delete").show();
+        $(this).parents("tr").find(".btn-cancel").remove();  
+        $(this).parents("tr").find(".btn-update").remove();  
+    });  
+	
+	$("body").on("click", ".btn-outline-primary", function(){  
+        var testName = $("#add_testName").val();
+		var table="test";
+        var testSkill = $("#add_testSkills").val();
+        var testLevel = $("#add_testLevel").val();
+		var testWeightage = $("#add_testWeightage").val();
+		var  questionCount= $("#add_questionCount").val();
+		var pwd = $("#add_pwd").val();
+		$.post("/cand_add", { table: table,testName: testName, testSkill: testSkill, testLevel:testLevel, testWeightage: testWeightage, questionCount: questionCount}, function(data) {
+		$("#displaymessage").html(data);
+		$("#displaymessage").show();
+			
+        });
+		  
+    }); 
+	
+	$("body").on("click", ".btn-secondary", function(){  
+        load_data_all();		  
+    });
+	
+	
+	$("body").on("click", ".btn-delete", function(){  
+		if (confirm("Are you sure you want delete this record?") == true)
+		{
+			currentRow=$(this).closest("tr"); 
+			cur_testID= currentRow.find("td:eq(0)").text();
+			$(this).parents("tr").remove();
+			var string = cur_testID;
+			var table="test";
+			$.post("/cand_delete", { table: table, string: string}, function(data) {
+				$("#displaymessage").html(data);
+				$("#displaymessage").show();
+			});
+		}else{}
+    });
+
+	/*
+	window.onload=function()	
+	{
+	PrintElem();
+	}
+  */
+});
+</script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lusitana&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/test.css') }}">
+<!--link rel= "stylesheet"  href= "candreg.css"-->
+</head>
+<body>
+<div class="page">
+  <header tabindex="0">Create a Test</header>
+<div class="sidebar">
+<ul>
+        <li><a href="{{ url_for('dashboard') }}" ><span>Home</span></a></li>
+		<li><a href="{{ url_for('hrafterlogin') }}"><span>Add HR</span></a></li>
+        <li><a href="{{ url_for('panel') }}"><span>Add Panel</span></a></li>
+		<div class="active">
+		<li><a href="{{ url_for('test') }}"><span>Add Test</span></a></li>
+		</div>
+		<li><a href="{{ url_for('cand') }}" ><span>Add Candidate</span></a></li>
+		<li><a href="{{ url_for('interview') }}"><span>Schedule Interview</span></a></li>
+		<li><a href="{{ url_for('executeint') }}" ><span>Execute Interview</span></a></li>
+		<li><a href="{{ url_for('execute') }}"><span>Interview Result</span></a></li>
+		
+        <li class="small"><a href="{{ url_for('logout') }}"class="arrow"><span>Logout</span></a></li>
+      </ul>
+</div>
+<div align="center">
+<div class="container">
+<div class="table-responsive"> 
+<div class="module">
+<div class='btn btn-warning' id="displaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+<div class='btn btn-success' id="successdisplaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+<table class="table table-bordered" id="myTable">
+  <thead>
+      <tr>
+		 <th></th>
+         <th ><input type="text" id="search_text_by_name" name="search_text_by_name" placeholder="Search using name"/></th>
+         <th ><input type="text" id="search_text_by_skills" placeholder="Search using skills"/></</th>
+         <th ></th>
+		 <th ></th>
+		 <th ></th>
+		 <th ><input type="submit" class="btn btn-secondary" value="Search All"></th>
+      </tr>
+	  <thead>
+	  <tr>
+		 <th>ID</th>
+         <th>Name</th>
+         <th>Skills</th>
+         <th>Level</th>
+		 <th>Weightage</th>
+		 <th>Total Questions</th>
+		 <th style="width:80px;">Register/Edit</th>
+      </tr>
+	  </thead>
+	  <tbody>
+	  <div id="myrow"></div> 
+   </tbody>
+	  <tfoot>
+ <!--form action="https://candidateinterview.azurewebsites.net/candsuc" method="post"-->
+	<tr>
+	<!--form action="http://127.0.0.1:5000/candsuc" method="post"-->
+	<td></td>
+	<td>
+	<div class="impfield">
+	<input type="text" size="16" placeholder="Enter name:" name="testName" id="add_testName">	
+	<label for="add_testName">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+    <td >
+	<div class="impfield">
+	<input type="text" size="16" placeholder="Enter skills:" name="testSkills" id="add_testSkills">	
+	<label for="add_testSkills">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+    <td>
+	<div class="impfield">
+	<input type="text" size="16" placeholder="Enter level:" name="testLevel" id="add_testLevel">	
+	<label for="add_testLevel">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+	<td>
+	<div class="impfield">
+	<input type="text" size="16" placeholder="Enter weightage" name="testWeightage" id="add_testWeightage"/>
+	<label for="add_testWeightage">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+	<td >
+	<div class="impfield">
+	<input type="text" size="16" placeholder="Total questions:" name="questionCount" id="add_questionCount">	
+	<label for="add_questionCount">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+	<td>
+	<input type="submit" class="btn btn-outline-primary" value="ADD">
+	</td>
+	<!--/form-->
+   </tr>
+   </tfoot>
+</table>
+
+<!--
+<b>Enter the date test was created on:</b>
+<input type="date" placeholder="(dd-mm-yyyy):" name="AddedOn"><br><br>
+<b>Enter the date test was modified on:</b>
+<input type="date" placeholder="(dd-mm-yyyy):" name="ModifiedOn"><br><br>
+-->
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

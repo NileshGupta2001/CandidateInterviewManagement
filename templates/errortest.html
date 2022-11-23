@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lusitana&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/candreg.css') }}">
+</head>
+<body>
+<div class="vertical-menu">
+  <a href="{{ url_for('dashboard') }}" class="arrow"><span>Home</span></a>
+  <a href="{{ url_for('customerreg') }}"class="arrow"><span>Add Candidate</span></a>
+  <a href="{{ url_for('interview') }}"class="arrow"><span>Schedule Interview</span></a>
+  <a href="{{ url_for('panel') }}"class="arrow"><span>Add Panel</span></a>
+  <a href="{{ url_for('hrafterlogin') }}"class="arrow"><span>Add HR</span></a>
+  <a class="active" href="{{ url_for('test') }}"class="arrow"><span>Add Test</span></a>
+  <a href="#about"class="arrow"><span>Interview Result</span></a>
+  <div class="vertical-menudown ">
+	<a href="{{ url_for('logout') }}"class="arrow"><span>Logout</span></a>
+  </div>
+</div>
+<div align="center">
+<h1>Error...</h1>
+{{error_statement}}
+<br><br>
+<a href="{{ url_for('test') }}">
+<p> GO BACK? </p></a>
+</body>
+</html>

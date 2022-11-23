@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Boogaloo&display=swap" rel="stylesheet">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/candreg.css') }}">
+<!--link rel= "stylesheet"  href= "candreg.css"-->
+</head>
+<body>
+<h1>Fill User Sign-In Details to Register</h1>
+<form action="https://candidateinterview.azurewebsites.net/hrsuc" method="post" class="module-border-wrap">
+<!--form action="http://127.0.0.1:5000/hrsuc" class="module-border-wrap" method="post"-->
+<div class="module">
+<div class="impfield">
+<b>Enter Full Name:</b>
+<input type="text" placeholder="Enter your name:" name="username">
+<label for="username">*</label></div>
+<div class="hide">It is a necessary field.</div><br>
+<div class="impfield">
+<b>Enter Email:</b>
+<input type="text" placeholder="Enter your email id" name="email">
+<label for="email">*</label></div>
+<div class="hide">It is a necessary field.</div><br>
+<div class="impfield">
+<b>Enter Password:</b>
+<input type="password" id="pwd" name="pwd" minlength="8">
+<label for="pwd">*</label></div>
+<div class="hide">It is a necessary field. Passwords must be of min length 8 and must contain a digit.</div><br>
+<div class="impfield">
+<b>Confirm Password:</b>
+<input type="password" id="pwd" name="conpwd" minlength="8">
+<label for="conpwd">*</label></div>
+<div class="hide">Passwords must match.</div><br><br>
+<input type="submit" value="SUBMIT" class="button"><br>
+</div>
+</form>
+</body>
+</html>

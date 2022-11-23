@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview form</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<!--script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script-->
+<script src="https://code.jquery.com/jquery-migrate-3.0.0.min.js"></script>
+<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js" ></script>
+<script>  
+var copydata;
+var cur_skills;
+function new_input(query)
+  {
+   $.ajax({
+    url:"/execinterviewrecords",
+    method:"POST",
+	data:{query:query},
+    success:function(res)
+    {
+	  copydata=res;
+	  var data = "<tr>";
+	  $.each(res,function(index,value){
+		data += "<td>"+value.int_id+"</td>"+"<td>"+value.name+"</td>"+"<td>"+value.Mobile+"</td>"+"<td>"+value.Email+"</td>"+"<td>"+value.role+"</td>";
+		
+		
+	  data+="<td><center><table class='noBorder' id='newtable'><thead>";
+      
+		if(value.skills){
+				let text=value.skills;
+				cur_skills=value.skills;
+				const myArray = text.split(",");
+				for (key in myArray)
+				{	
+					data += "<tr class='noBorder'><td class='noBorder'><label style='color:black; padding-top:6px;'>"+myArray[key]+"</label></td><td class='noBorder'><input type='text' size='6' placeholder='Enter marks' id='add_"+myArray[key]+"'/></td></tr>";
+					
+				}
+				//data += "<tr class='noBorder'><td class='noBorder'><label style='color:black; padding-top:6px;'>"+value.skills+"</label></td><td class='noBorder'><input type='text' size='6' placeholder='Enter marks' id='add_"+value.skills+"'/></td></tr>";
+            }
+      
+	  data+="</thead></table></center></td><td><input type='submit' class='btn btn-outline-primary' value='ADD'></td></tr>";
+	  });
+      $("tbody").html(data);
+    }
+   });
+   
+  }
+  
+function add_data()
+{
+	var table="result";
+			// declaring global variables
+		var currentRow;
+		var cur_name;
+		var cur_roles;
+		var cur_mobile;
+		var cur_email;
+		var editmode=false;
+		
+		$('#myTable > tbody  > tr').each(function(index, tr) {
+			$(tr).find("td:not(:last-child)").each(function(i){
+				if (i=='1'){
+					cur_name = $(tr).find("td:eq(1)").text();
+				}else if (i=='2'){
+					cur_mobile = $(tr).find("td:eq(2)").text();
+				}else if (i=='3'){
+					cur_email = $(tr).find("td:eq(3)").text();
+				}else if (i=='4'){
+					cur_role = $(tr).find("td:eq(4)").text();
+				}else{} 
+			});  
+	
+		
+		
+		//alert(cur_skills);
+		const myArray = cur_skills.split(",");
+		//alert(cur_skills);
+		var insert_marks = [];
+		for (key in myArray)
+			{	
+					//data += "<tr class='noBorder'><td class='noBorder'><label style='color:black; padding-top:6px;'>"+myArray[key]+"</label></td><td class='noBorder'><input type='text' size='6' placeholder='Enter marks' id='add_"+myArray[key]+"'/></td></tr>";
+				var string;
+				string='add_'+myArray[key];
+				var marks = $("#"+string).val();
+				alert(marks);
+				insert_skills.push(marks);
+			}
+		var finalmarks = insert_marks.toString();
+        //var skills = $("input[name=add_skills]").val();
+		/*
+		$.post("/cand_add", { table: table,name: cur_name, mobile: cur_mobile,email: cur_email, role: role, skills: skills, testName: testName, panelName: panelName}, function(data) {
+				$("#displaymessage").html(data);
+				$("#displaymessage").show();
+			
+			});
+		*/
+		});
+		
+
+}
+
+function load_data_by_autoname(query)
+  {
+   $.ajax({
+    url:"/execinterviewrecords",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var availableTags=[];
+      $.each(res,function(index,value){
+			availableTags.push(value.name);
+    });
+	$( "#search_text_by_intname" ).autocomplete({
+		source: availableTags,
+		open: function() {
+			$('.ui-autocomplete').width('120px');
+            $('.ui-widget-content').css('background', '#E1F7DE');
+            $('.ui-menu-item a').removeClass('ui-corner-all');
+        }
+		});
+    }
+   });
+  }
+  
+  function load_data_by_mobile(query)
+  {
+   $.ajax({
+    url:"/searchintbymobile",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var data = "<tr>";
+	  $.each(res,function(index,value){
+		data += "<td>"+value.int_id+"</td>"+"<td>"+value.name+"</td>"+"<td>"+value.Mobile+"</td>"+"<td>"+value.Email+"</td>"+"<td>"+value.role+"</td>";
+	  
+	  data+="<td><center><table class='noBorder' id='newtable'><thead>";
+      
+		if(value.skills){
+				let text=value.skills;
+				const myArray = text.split(",");
+				for (key in myArray)
+				{	
+					data += "<tr class='noBorder'><td class='noBorder'><label style='color:black; padding-top:6px;'>"+myArray[key]+"</label></td><td class='noBorder'><input type='text' size='6' placeholder='Enter marks' id='add_"+myArray[key]+"'/></td></tr>";
+				}
+				//data += "<tr class='noBorder'><td class='noBorder'><label style='color:black; padding-top:6px;'>"+value.skills+"</label></td><td class='noBorder'><input type='text' size='6' placeholder='Enter marks' id='add_"+value.skills+"'/></td></tr>";
+            }
+      
+	  data+="</thead></table></center></td><td><input type='submit' class='btn btn-outline-primary' value='ADD'></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  function load_data_by_automobile(query)
+  {
+   $.ajax({
+    url:"/searchintbymobile",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var availableTags=[];
+      $.each(res,function(index,value){
+			availableTags.push(value.Mobile);
+    });
+	$( "#search_text_by_mobile" ).autocomplete({
+		source: availableTags,
+		open: function() {
+			$('.ui-autocomplete').width('120px');
+            $('.ui-widget-content').css('background', '#E1F7DE');
+            $('.ui-menu-item a').removeClass('ui-corner-all');
+        }
+		});
+    }
+   });
+  }
+
+  function load_data_by_email(query)
+  {
+   $.ajax({
+    url:"/searchintbyemail",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var data = "<tr>";
+	  $.each(res,function(index,value){
+		data += "<td>"+value.int_id+"</td>"+"<td>"+value.name+"</td>"+"<td>"+value.Mobile+"</td>"+"<td>"+value.Email+"</td>"+"<td>"+value.role+"</td>";
+	  
+	  data+="<td><center><table class='noBorder' id='newtable'><thead>";
+      
+		if(value.skills){
+				let text=value.skills;
+				const myArray = text.split(",");
+				for (key in myArray)
+				{	
+					data += "<tr class='noBorder'><td class='noBorder'><label style='color:black; padding-top:6px;'>"+myArray[key]+"</label></td><td class='noBorder'><input type='text' size='6' placeholder='Enter marks' id='add_"+myArray[key]+"'/></td></tr>";
+				}
+				//data += "<tr class='noBorder'><td class='noBorder'><label style='color:black; padding-top:6px;'>"+value.skills+"</label></td><td class='noBorder'><input type='text' size='6' placeholder='Enter marks' id='add_"+value.skills+"'/></td></tr>";
+            }
+      
+	  data+="</thead></table></center></td><td><input type='submit' class='btn btn-outline-primary' value='ADD'></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  function load_data_by_autoemail(query)
+  {
+   $.ajax({
+    url:"/searchintbyemail",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var availableTags=[];
+      $.each(res,function(index,value){
+			availableTags.push(value.Email);
+    });
+	$( "#search_text_by_email" ).autocomplete({
+		source: availableTags,
+		open: function() {
+			$('.ui-autocomplete').width('120px');
+            $('.ui-widget-content').css('background', '#E1F7DE');
+            $('.ui-menu-item a').removeClass('ui-corner-all');
+        }
+		});
+    }
+   });
+  }
+ 
+function Loaddatabynameinscheduleinterview()
+{
+	
+	$('#search_text_by_intname').keyup(function(){
+		var search = $(this).val();
+		if(search != ''){
+		load_data_by_autoname(search);
+	}else{
+		load_data_by_autoname();
+   }
+  });
+  
+  $('#search_text_by_mobile').keyup(function(){
+		var search = $(this).val();
+		if(search != ''){
+		load_data_by_automobile(search);
+	}else{
+		load_data_by_automobile();
+   }
+  });
+  
+  $('#search_text_by_email').keyup(function(){
+		var search = $(this).val();
+		if(search != ''){
+		load_data_by_autoemail(search);
+	}else{
+		load_data_by_autoemail();
+   }
+  });
+}
+ 
+function GetSelectedData()
+{
+	$('#search_text_by_intname').on('autocompleteselect', function (e, ui) {
+        new_input(ui.item.value);
+    });
+	
+	$('#search_text_by_mobile').on('autocompleteselect', function (e, ui) {
+        load_data_by_mobile(ui.item.value);
+    });
+	
+	$('#search_text_by_email').on('autocompleteselect', function (e, ui) {
+        load_data_by_email(ui.item.value);
+    });
+} 
+ 
+$(document).ready(function(){
+
+  var getvalues;
+  var intvalues;
+  new_search();  
+  
+  function new_search()
+  {
+	  var data = "<tr><td></td><td><input type='text' size='15' placeholder='Search name:' id='search_text_by_intname' name='search_text_by_intname' class='search_text_by_intname'/></td><td><input type='text' size='15' id='search_text_by_mobile' name='search_text_by_mobile' placeholder='Search mobile'/></td><td><input type='text' size='15' id='search_text_by_email' name='search_text_by_email' placeholder='Search email'/></td><td></td><td></td><td></td>";
+      $("tfoot").html(data);
+	  Loaddatabynameinscheduleinterview();
+	  GetSelectedData();
+  }
+  
+  function load_data_all()
+  {
+   $.ajax({
+    url:"/searchresall",
+    method:"POST",
+    success:function(res)
+    {
+	  intvalues=res;
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td>"+value.res_id+"</td>"+"<td>"+value.name+"</td>"+"<td>"+value.mobile+"</td>"+"<td>"+value.email+"</td><td>"+value.role+"</td>"+"<td>"+value.skills+"</td><td>"+value.marks+"</td><td><button class='btn btn-info btn-xs btn-edit' >Edit</button><button class='btn btn-danger btn-xs btn-delete'>Delete</button></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  $("body").on("click", ".btn-secondary", function(){  
+        load_data_all();		  
+    });
+  
+  $("body").on("click", ".btn-outline-primary", function(){  
+		add_data();
+    });
+  
+});
+</script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lusitana&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/test.css') }}">
+<!--link rel= "stylesheet"  href= "cand.css"-->
+</head>
+<body>
+<div class="page">
+  <header tabindex="0">Interview Rating Form</header>
+  <div class="sidebar">
+<ul>
+        <li><a href="{{ url_for('dashboard') }}" ><span>Home</span></a></li>
+		<li><a href="{{ url_for('hrafterlogin') }}"><span>Add HR</span></a></li>
+        <li><a href="{{ url_for('panel') }}"><span>Add Panel</span></a></li>
+		<li><a href="{{ url_for('test') }}"><span>Add Test</span></a></li>
+		<li><a href="{{ url_for('cand') }}" ><span>Add Candidate</span></a></li>
+		<li><a href="{{ url_for('interview') }}"><span>Schedule Interview</span></a></li>
+		<li><a href="{{ url_for('newinterview') }}"><span>TESTRUN Interview Page</span></a></li>
+		<div class="active">
+		<li><a href="{{ url_for('executeint') }}" ><span>Execute Interview</span></a></li>
+		</div>
+		<li><a href="{{ url_for('execute') }}"><span>Interview Result</span></a></li>
+		
+        <li class="small"><a href="{{ url_for('logout') }}"class="arrow"><span>Logout</span></a></li>
+      </ul>
+</div>
+<div align="center">
+<div class="container">
+<div class="table-responsive"> 
+<div class="module">
+<div class='btn btn-warning' id="displaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+<div class='btn btn-success' id="successdisplaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+<table class="table table-bordered" id="myTable">
+  <thead>
+		 <th></th>
+         <th><input type="text" id="search_text_by_name" name="search_text_by_name" placeholder="Search interview"/></th>
+         <th></th>
+         <th></th>
+		 <th ></th>
+		 <th ></th>
+		 <th ><input type="submit" class="btn btn-secondary" value="Search All"></th>
+      </tr>
+	  <thead>
+	  <tr>
+		 <th>ID</th>
+         <th> Name</th>
+		 <th style="width:80px;"> Mobile</th>
+		 <th style="width:80px;"> Email</th>
+         <th  style="width:80px;"> Role</th>
+         <th> Skills</th>
+		 <th style="width:60px;">Register/Edit</th>
+      </tr>
+	  </thead>
+	  <tbody>   </tbody>
+
+	  <tfoot><div id="myrow"></div> 
+   </tfoot>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

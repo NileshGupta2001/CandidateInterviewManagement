@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HR Form</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  load_data_all();
+  
+  function load_data_all()
+  {
+   $.ajax({
+    url:"/searchhrall",
+    method:"POST",
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td>"+value.HR_id+"</td>"+"<td>"+value.username+"</td>"+"<td>"+value.email+"</td><td></td><td></td>"+ "<td><button class='btn btn-info btn-xs btn-edit' >Edit</button><button class='btn btn-danger btn-xs btn-delete'>Delete</button></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  function load_data_by_name(query)
+  {
+   $.ajax({
+    url:"/searchhrbyusername",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td>"+value.HR_id+"</td>"+"<td>"+value.username+"</td>"+"<td>"+value.email+"</td><td></td><td></td>"+ "<td><button class='btn btn-info btn-xs btn-edit' >Edit</button><button class='btn btn-danger btn-xs btn-delete'>Delete</button></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  function load_data_by_email(query)
+  {
+   $.ajax({
+    url:"/searchhrbyemail",
+    method:"POST",
+    data:{query:query},
+    success:function(res)
+    {
+	  var data = "<tr>";
+      $.each(res,function(index,value){
+		data += "<td>"+value.HR_id+"</td>"+"<td>"+value.username+"</td>"+"<td>"+value.email+"</td><td></td><td></td>"+ "<td><button class='btn btn-info btn-xs btn-edit' >Edit</button><button class='btn btn-danger btn-xs btn-delete'>Delete</button></td></tr>";
+      });
+      $("tbody").html(data);
+    }
+   });
+  }
+  
+  $('#search_text_by_name').keyup(function(){
+    var search = $(this).val();
+    if(search != ''){
+    load_data_by_name(search);
+   }else{
+    load_data_by_name();
+   }
+  });
+  
+  $('#search_text_by_email').keyup(function(){
+    var search = $(this).val();
+    if(search != ''){
+    load_data_by_email(search);
+   }else{
+    load_data_by_email();
+   }
+  });
+  
+  // declaring global variables
+	var currentRow;
+	var cur_HR_id;
+	var cur_username;
+	var cur_email;
+	var cur_pwd;
+	var cur_conpwd;
+  // Show Input element
+    $("body").on("click", ".btn-edit", function(){  
+		currentRow=$(this).closest("tr"); 
+        $(this).parents("tr").find("td:not(:last-child)").each(function(i){
+			if(i=='0'){
+				cur_HR_id= currentRow.find("td:eq(0)").text();
+            } else if (i=='1'){
+                var idname = 'username';
+				var fieldtype = 'text';
+				cur_username = currentRow.find("td:eq(1)").text();
+            }else if (i=='2'){
+                var idname = 'email';
+				var fieldtype = 'text';
+				cur_email = currentRow.find("td:eq(2)").text();
+			}else if (i=='3'){
+                var idname = 'pwd';
+				var fieldtype = 'password';
+				cur_pwd = currentRow.find("td:eq(3)").text();
+			}else if (i=='4'){
+                var idname = 'conpwd';
+				var fieldtype = 'password';
+				cur_conpwd = currentRow.find("td:eq(4)").text();
+			}
+			else{} 
+			
+			if(i!=0){
+			$(this).html('<input type="' + fieldtype + '" name="updaterec" id="' + idname + '" size="7" value="' + $(this).text() + '">');
+			}else{} 
+        }); 
+		
+		$(this).parents("tr").find("td:eq(5)").prepend("<button class='btn btn-update'>Update</button><button class='btn btn-cancel'>Cancel</button>");
+		$(this).hide();    
+		$(this).parents("tr").find(".btn-delete").hide();
+		
+    });  
+	
+	$("body").on("click", ".btn-cancel", function(){  
+		var currentRow=$(this).closest("tr"); 
+        $(this).parents("tr").find("td:not(:last-child)").each(function(i){
+            if (i=='1'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_username);
+            }else if (i=='2'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_email);
+			}else if (i=='3'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_pwd);
+			}else if (i=='4'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_conpwd);
+            }else{} 
+        });  
+        $(this).parents("tr").find(".btn-edit").show(); 
+		$(this).parents("tr").find(".btn-delete").show();		
+        $(this).parents("tr").find(".btn-update").remove();  
+        $(this).parents("tr").find(".btn-cancel").remove();  
+    });  
+	
+	$("body").on("click", ".btn-update", function(){
+		cur_HR_id= currentRow.find("td:eq(0)").text();
+        var string = cur_HR_id;
+		var table="HR_login";
+		var username = $("#username").val();
+		var email = $("#email").val();
+		var pwd = $("#pwd").val();
+        var conpwd = $("#conpwd").val();
+		$.post("/table_update", { table: table, string: string, username: username, pwd: pwd, conpwd:conpwd, email: email}, function(data) {
+            $("#displaymessage").html(data);
+            $("#displaymessage").show();
+			alert("Record Updated Successfully. Site needs to reload.");
+			location.reload();
+        });
+		
+          
+        $(this).parents("tr").find(".btn-edit").show();  
+		$(this).parents("tr").find(".btn-delete").show();
+        $(this).parents("tr").find(".btn-cancel").remove();  
+        $(this).parents("tr").find(".btn-update").remove();  
+    });  
+	
+	
+	$("body").on("click", ".btn-outline-primary", function(){  
+        var username = $("#add_username").val();
+		var table="HR_login";
+        var pwd = $("#add_pwd").val();
+        var conpwd = $("#add_conpwd").val();
+		var email = $("#add_email").val();
+		$.post("/cand_add", { table: table,username: username, pwd: pwd, conpwd:conpwd, email: email}, function(data) {
+		$("#displaymessage").html(data);
+		$("#displaymessage").show();
+			
+        });
+		  
+    }); 
+	
+	$("body").on("click", ".btn-secondary", function(){  
+        load_data_all();		  
+    });
+	
+	
+	$("body").on("click", ".btn-delete", function(){  
+		if (confirm("Are you sure you want delete this record?") == true)
+		{
+			currentRow=$(this).closest("tr"); 
+			cur_HR_login= currentRow.find("td:eq(0)").text();
+			$(this).parents("tr").remove();
+			var string = cur_HR_login;
+			var table="HR_login";
+			$.post("/cand_delete", { table: table, string: string}, function(data) {
+				$("#displaymessage").html(data);
+				$("#displaymessage").show();
+			});
+		}else{}
+    });
+	/*
+	window.onload=function()	
+	{
+	PrintElem();
+	}
+  */
+});
+</script>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lusitana&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap" rel="stylesheet">
+<link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='styles/cand.css') }}">
+</head>
+<body>
+<div class="page">
+  <header tabindex="0">HR Form</header>
+<div class="sidebar">
+<ul>
+        <li><a href="{{ url_for('dashboard') }}" ><span>Home</span></a></li>
+		<div class="active">
+		<li><a href="{{ url_for('hrafterlogin') }}"><span>Add HR</span></a></li>
+		</div>
+        <li><a href="{{ url_for('panel') }}"><span>Add Panel</span></a></li>
+		<li><a href="{{ url_for('test') }}"><span>Add Test</span></a></li>
+		<li><a href="{{ url_for('cand') }}" ><span>Add Candidate</span></a></li>
+		<li><a href="{{ url_for('interview') }}"><span>Schedule Interview</span></a></li>
+		<li><a href="{{ url_for('executeint') }}" ><span>Execute Interview</span></a></li>
+		<li><a href="{{ url_for('execute') }}"><span>Interview Result</span></a></li>
+		
+        <li class="small"><a href="{{ url_for('logout') }}"class="arrow"><span>Logout</span></a></li>
+      </ul>
+</div>
+<div align="center">
+<div class="container">
+<div class="table-responsive"> 
+<div class="module">
+<div class='btn btn-warning' id="displaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+<div class='btn btn-success' id="successdisplaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+<table class="table table-bordered" id="myTable">
+  <thead>
+      <tr>
+		 <th></th>
+         <th ><input type="text" id="search_text_by_name" name="search_text_by_name" placeholder="Search using name"/></th>
+         <th ><input type="text" id="search_text_by_email" placeholder="Search using email"/></th>
+         <th ></th>
+		 <th ></th>
+		 <th ><input type="submit" class="btn btn-secondary" value="Search All"></th>
+      </tr>
+	  <thead>
+	  <tr>
+		 <th>ID</th>
+         <th>Name</th>
+         <th>Email</th>
+         <th>Password</th>
+		 <th>Confirm Password</th>
+		 <th style="width:80px;">Register/Edit</th>
+      </tr>
+	  </thead>
+	  <tbody>
+	  <div id="myrow"></div> 
+   </tbody>
+	  <tfoot>
+	  <tr>
+	<!--form action="http://127.0.0.1:5000/candsuc" method="post"-->
+	<td></td>
+	<td>
+	<div class="impfield">
+	<input type="text" size="16" placeholder="Enter name:" name="username" id="add_username">	
+	<label for="add_username">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+	<td >
+	<div class="impfield">
+	<input type="email"  size="16" placeholder="Enter email" name="email" id="add_email" />
+	<label for="email">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+	<td>
+	<div class="impfield">
+	<input type="password" size="16" placeholder="Enter password" name="pwd" id="add_pwd"/>
+	<label for="add_pwd">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+	<td>
+	<div class="impfield">
+	<input type="password" size="16" placeholder="Reenter password" name="conpwd" id="add_conpwd"/>
+	<label for="add_conpwd">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+	<td>
+	<input type="submit" class="btn btn-outline-primary" value="ADD">
+	</td>
+	<!--/form-->
+   </tr>
+   </tfoot>
+<!--form action="http://127.0.0.1:5000/hrsuc" method="post" class="module-border-wrap"-->
+</table>
+</div>
+</div>
+</div>
+</div>
+</body>
+</html>

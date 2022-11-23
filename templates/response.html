@@ -1,0 +1,239 @@
+<!--script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  load_data();
+  function load_data(query)
+  {
+   $.ajax({
+    url:"/searchcand",
+    method:"POST",
+    data:{query:query},
+    success:function(data)
+    {
+      $('#result').html(data);
+      $("#result").append(data.htmlresponse); 
+    }
+   });
+  }
+  $('#search_text').keyup(function(){
+    var search = $(this).val();
+    if(search != ''){
+    load_data(search);
+   }else{
+    load_data();
+   }
+  });
+  
+  // declaring global variables
+	var currentRow;
+	var cur_username;
+	var cur_dob;
+	var cur_gender;
+	var cur_mobile;
+	var cur_email;
+	var cur_userid;
+  // Show Input element
+    $("body").on("click", ".btn-edit", function(){  
+		currentRow=$(this).closest("tr"); 
+        $(this).parents("tr").find("td:not(:last-child)").each(function(i){
+			if(i=='0'){
+				cur_userid= currentRow.find("td:eq(0)").text();
+            } else if (i=='1'){
+                var idname = 'username';
+				var fieldtype = 'text';
+				cur_username = currentRow.find("td:eq(1)").text();
+            }else if (i=='2'){
+                var idname = 'dob';
+				var fieldtype = 'date';
+				cur_dob = currentRow.find("td:eq(2)").text();
+            }else if (i=='3'){
+                var idname = 'gender';
+				var fieldtype = 'text';
+				cur_gender = currentRow.find("td:eq(3)").text();
+			}else if (i=='4'){
+                var idname = 'mobile';
+				var fieldtype = 'text';
+				cur_mobile = currentRow.find("td:eq(4)").text();
+			}else if (i=='5'){
+                var idname = 'email';
+				var fieldtype = 'email';
+				cur_email = currentRow.find("td:eq(5)").text();
+			}
+			else{} 
+			if (idname=='gender'){
+			$(this).html('<select id="gender"> <option value="male">MALE</option> <option value="female">FEMALE</option></select>');
+			}else if(idname=='dob'){
+			$(this).html('<input type="date" name="updaterec" id="' + idname + '" style="width:90px;" value="' + $(this).text() + '">');
+			}
+			else if(i!=0){
+			$(this).html('<input type="' + fieldtype + '" name="updaterec" id="' + idname + '" size="7" value="' + $(this).text() + '">');
+			}else{} 
+        }); 
+		
+		$(this).parents("tr").find("td:eq(6)").prepend("<button class='btn btn-update'>Update</button><button class='btn btn-cancel'>Cancel</button>");
+		$(this).hide();    
+		$(this).parents("tr").find(".btn-delete").hide();
+		
+    });  
+	
+	$("body").on("click", ".btn-cancel", function(){  
+		var currentRow=$(this).closest("tr"); 
+        $(this).parents("tr").find("td:not(:last-child)").each(function(i){
+            if (i=='1'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_username);
+            }else if (i=='2'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_dob);
+            }else if (i=='3'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_gender);
+			}else if (i=='4'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_mobile);
+			}else if (i=='5'){
+                $(this).parents("tr").find('td:eq("' + i + '")').text(cur_email);
+            }else{} 
+        });  
+        $(this).parents("tr").find(".btn-edit").show(); 
+		$(this).parents("tr").find(".btn-delete").show();		
+        $(this).parents("tr").find(".btn-update").remove();  
+        $(this).parents("tr").find(".btn-cancel").remove();  
+    });  
+	
+	$("body").on("click", ".btn-update", function(){  
+        var string = cur_userid;
+        var username = $("#username").val();
+        var dob = $("#dob").val();
+        var gender = $("#gender").val();
+		var mobile = $("#mobile").val();
+		var email = $("#email").val();
+		$.post("/cand_update", { string: string,username: username, dob: dob, gender:gender, mobile: mobile, email: email}, function(data) {
+            $("#displaymessage").html(data);
+            $("#displaymessage").show();
+			location.reload();
+        });
+		
+          
+        $(this).parents("tr").find(".btn-edit").show();  
+		$(this).parents("tr").find(".btn-delete").show();
+        $(this).parents("tr").find(".btn-cancel").remove();  
+        $(this).parents("tr").find(".btn-update").remove();  
+    });  
+	
+	$("body").on("click", ".btn-outline-primary", function(){  
+        var username = $("#add_username").val();
+        var dob = $("#add_dob").val();
+        var gender = $("#add_gender").val();
+		var mobile = $("#add_mobile").val();
+		var email = $("#add_email").val();
+		var pwd = $("#add_pwd").val();
+		$.post("/cand_add", { username: username, dob: dob, gender:gender, mobile: mobile, email: email}, function(data) {
+		$("#displaymessage").html(data);
+		$("#displaymessage").show();
+			
+        });
+		  
+    }); 
+	
+	$("body").on("click", ".btn-delete", function(){  
+		if (confirm("Are you sure you want delete this record?") == true)
+		{
+			currentRow=$(this).closest("tr"); 
+			cur_userid= currentRow.find("td:eq(0)").text();
+			$(this).parents("tr").remove();
+			var string = cur_userid;
+			$.post("/cand_delete", { string: string}, function(data) {
+				$("#displaymessage").html(data);
+				$("#displaymessage").show();
+			});
+		}else{}
+    });
+	
+	window.onload=function()	
+	{
+	PrintElem();
+	}
+  
+});
+</script-->
+<!--div class='btn btn-warning' id="displaymessage" style="display:none;width:100%;margin-top:10px;"></div>
+<div class='btn btn-success' id="successdisplaymessage" style="display:none;width:100%;margin-top:10px;"></div-->
+<table class="table table-bordered">
+  <!--thead>
+	  <tr>
+		 <th>ID</th>
+         <th>Name</th>
+         <th>DOB</th>
+         <th>Gender</th>
+		 <th>Mobile</th>
+		 <th>Email</th>
+		 <th style="width:300px;">Register/Edit</th>
+      </tr>
+  <thead-->
+  <tbody>
+  {% for row in candidate %}  
+   <tr>
+    <td>{{row[0]}}</td>
+    <td>
+	{{row[1]}}
+	</td>
+    <td>
+	{{row[2]}}
+	</td>
+	<td>
+	{{row[4]}}
+	</td>
+	<td>
+	{{row[5]}}
+	</td>
+	<td>
+	{{row[3]}}
+	</td>
+	<td>
+	<button class='btn btn-info btn-xs btn-edit' >Edit</button><button class='btn btn-danger btn-xs btn-delete'>Delete</button>
+    </td>
+   </tr>
+   {% endfor %} 
+   </tbody>
+   <!--tfoot>
+ <!--form action="https://candidateinterview.azurewebsites.net/candsuc" method="post"-->
+	<!--tr>
+	<!--form action="http://127.0.0.1:5000/candsuc" method="post"-->
+	<!--td></td>
+	<td>
+	<div class="impfield">
+	<input type="text" size="16" placeholder="Enter name:" name="username" id="add_username">	
+	<label for="add_username">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+    <td >
+	<input type="date" placeholder="Enter DOB(dd-mm-yyyy):" name="dob" id="add_dob" style="width:90px;" />
+	</td>
+    <td>
+	<div class="impfield">
+	<select name="gender" id="add_gender" style="max-width:80%;">
+	<option value="male">MALE</option>
+	<option value="female">FEMALE</option>
+	</select>
+	<label for="add_gender">*</label></div>
+	<div class="hide">Required.</div>
+	</td>
+	<td>
+	<div class="impfield">
+	<input type="text" size="16" placeholder="Enter mobile" name="mobile" id="add_mobile"/>
+	<label for="add_mobile">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+	<td >
+	<div class="impfield">
+	<input type="email"  size="16" placeholder="Enter email" name="email" id="add_email" />
+	<label for="email">*</label></div>
+	<div class="hide">It is a necessary field.</div>
+	</td>
+	<td>
+	<input type="submit" class="btn btn-outline-primary" value="ADD">
+	</td>
+	<!--/form-->
+   <!--/tr>
+   </tfoot-->
+   </table>
+   <!--/form-->
+  
